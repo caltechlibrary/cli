@@ -77,6 +77,7 @@ func (cfg *Config) Usage() string {
 	if len(cfg.ExampleText) > 0 {
 		text = append(text, cfg.ExampleText)
 	}
+	text = append(text, "\n")
 	if len(cfg.VersionText) > 0 {
 		text = append(text, cfg.VersionText)
 	}
