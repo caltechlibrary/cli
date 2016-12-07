@@ -22,6 +22,7 @@ package cli
 
 import (
 	"flag"
+	"log"
 	"os"
 	"strings"
 )
@@ -105,6 +106,14 @@ func (cfg *Config) Get(key string) string {
 	return ""
 }
 
+// MergeEnv merge environment variables into the configuration structure.
+// options are
+// + prefix - e.g. EPGO, name space before the first underscore in the envinronment
+//   + prefix plus uppercase key forms the complete environment variable name
+// + key - the field map (e.g ApiURL maps to API_URL in EPGO_API_URL for prefix EPGO)
+// + proposedValue - the proposed value, usually the value from the flags passed in (an empty string means no value provided)
+//
+// returns the new value of the environment string merged
 func (cfg *Config) MergeEnv(envVar, flagValue string) string {
 	val := strings.TrimSpace(flagValue)
 	if len(val) > 0 {
@@ -113,4 +122,19 @@ func (cfg *Config) MergeEnv(envVar, flagValue string) string {
 		cfg.Options[envVar] = os.Getenv(cfg.EnvPrefix + "_" + strings.ToUpper(envVar))
 	}
 	return cfg.Options[envVar]
+}
+
+// CheckOption accepts the variable associated with a flag is empty the default provided is accepted and returned.
+// if that value is not empty it updates the config structure.then returns the default provided.
+func (cfg *Config) CheckOptions(key, flagValue, defaultValue string, required bool) string {
+	val := strings.TrimSpace(flagValue)
+	if len(val) > 0 {
+		cfg.Options[key] = val
+	} else {
+		cfg.Options[key] = defaultValue
+	}
+	if s, ok := cfg.Options[key]; (len(s) == 0 || ok == false) && required == true {
+		log.Fatalf("Missing %s_%s", strings.ToUpper(cfg.appName), strings.ToUpper(key))
+	}
+	return cfg.Options[key]
 }
