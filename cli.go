@@ -124,17 +124,15 @@ func (cfg *Config) MergeEnv(envVar, flagValue string) string {
 	return cfg.Options[envVar]
 }
 
-// CheckOption accepts the variable associated with a flag is empty the default provided is accepted and returned.
-// if that value is not empty it updates the config structure.then returns the default provided.
-func (cfg *Config) CheckOptions(key, flagValue, defaultValue string, required bool) string {
-	val := strings.TrimSpace(flagValue)
-	if len(val) > 0 {
-		cfg.Options[key] = val
-	} else {
-		cfg.Options[key] = defaultValue
+// CheckOption checks the trimmer string value, if len is 0, log an error message and if required is true exit(1)
+// else return  the value passed in.
+func (cfg *Config) CheckOption(envVar, value string, required bool) string {
+	value = strings.TrimSpace(value)
+	if len(value) == 0 {
+		log.Printf("Missing %s_%s", strings.ToUpper(cfg.appName), strings.ToUpper(envVar))
+		if required == true {
+			os.Exit(1)
+		}
 	}
-	if s, ok := cfg.Options[key]; (len(s) == 0 || ok == false) && required == true {
-		log.Fatalf("Missing %s_%s", strings.ToUpper(cfg.appName), strings.ToUpper(key))
-	}
-	return cfg.Options[key]
+	return value
 }
