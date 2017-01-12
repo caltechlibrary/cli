@@ -27,6 +27,10 @@ import (
 	"strings"
 )
 
+const (
+	Version = "v0.0.1"
+)
+
 // Config holds the merged environment and options selected when the program runs
 type Config struct {
 	appName         string            `json:"app_name"`
