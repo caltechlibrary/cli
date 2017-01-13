@@ -27,10 +27,6 @@ import (
 	"strings"
 )
 
-const (
-	Version = "v0.0.1"
-)
-
 // Config holds the merged environment and options selected when the program runs
 type Config struct {
 	appName         string            `json:"app_name"`
@@ -126,6 +122,29 @@ func (cfg *Config) MergeEnv(envVar, flagValue string) string {
 		cfg.Options[envVar] = os.Getenv(cfg.EnvPrefix + "_" + strings.ToUpper(envVar))
 	}
 	return cfg.Options[envVar]
+}
+
+// MergeEnvBool till pick use flagValue if present, otherwise is the environment value.
+// It returns the value selected (e.g. useful when combined with CheckOption()
+func (cfg *Config) MergeEnvBool(envVar string, flagValue bool) bool {
+	envVal := (func(envVar string) bool {
+		s := os.Getenv(cfg.EnvPrefix + "_" + strings.ToUpper(envVar))
+		switch strings.TrimSpace(strings.ToLower(s)) {
+		case "true":
+			return true
+		case "t":
+			return true
+		case "1":
+			return true
+		default:
+			return false
+		}
+	}(envVar))
+
+	if envVal == true || flagValue == true {
+		return true
+	}
+	return false
 }
 
 // CheckOption checks the trimmer string value, if len is 0, log an error message and if required is true exit(1)

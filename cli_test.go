@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
@@ -45,5 +46,24 @@ func TestMergeEnv(t *testing.T) {
 			t.Error(fmt.Sprintf("%s_%s error %s", "EPGO", term, s))
 			t.FailNow()
 		}
+	}
+}
+
+func TestMergeBool(t *testing.T) {
+	cfg := New("testcli", "TESTCLI", "", "v0.0.0")
+	envVar := "TESTCLI_ONOFF"
+	onoff := true
+	expected := true
+	// NOTE: TESTCLI_ONOFF willnoe be set so will always return false
+	result := cfg.MergeEnvBool("onoff", onoff)
+	if expected != result {
+		t.Errorf("For onoff %t (env: %q), Expected %t, got %t", onoff, os.Getenv(envVar), expected, result)
+	}
+
+	onoff = false
+	expected = false
+	result = cfg.MergeEnvBool("onoff", onoff)
+	if expected != result {
+		t.Errorf("For onoff %t (env: %q), Expected %t, got %t", onoff, os.Getenv(envVar), expected, result)
 	}
 }
