@@ -53,7 +53,7 @@ func New(appName, envPrefix, license, version string) *Config {
 		LicenseText:     license,
 		UsageText:       "",
 		DescriptionText: "",
-		OptionsText:     "OPTIONS",
+		OptionsText:     "OPTIONS\n",
 		ExampleText:     "",
 		VersionText:     appName + " " + version,
 		Options:         make(map[string]string),
