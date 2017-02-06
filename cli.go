@@ -53,7 +53,7 @@ func New(appName, envPrefix, license, version string) *Config {
 		LicenseText:     license,
 		UsageText:       "",
 		DescriptionText: "",
-		OptionsText:     "OPTIONS",
+		OptionsText:     "OPTIONS\n\n",
 		ExampleText:     "",
 		VersionText:     appName + " " + version,
 		Options:         make(map[string]string),
@@ -158,4 +158,24 @@ func (cfg *Config) CheckOption(envVar, value string, required bool) string {
 		}
 	}
 	return value
+}
+
+// Open accepts a filename, fallbackFile (usually os.Stdout, os.Stdin, os.Stderr) and returns
+// a file pointer and error.  It is a conviences function for wrapping stdin, stdout, stderr
+// If filename is "-" or filename is "" then fallbackFile is used.
+func Open(filename string, fallbackFile *os.File) (*os.File, error) {
+	if len(filename) == 0 || filename == "-" {
+		return fallbackFile, nil
+	}
+	return os.Open(filename)
+}
+
+// Create accepts a filename, fallbackFile (usually os.Stdout, os.Stdin, os.Stderr) and returns
+// a file pointer and error.  It is a conviences function for wrapping stdin, stdout, stderr
+// If filename is "-" or filename is "" then fallbackFile is used.
+func Create(filename string, fallbackFile *os.File) (*os.File, error) {
+	if len(filename) == 0 || filename == "-" {
+		return fallbackFile, nil
+	}
+	return os.Create(filename)
 }

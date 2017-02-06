@@ -38,6 +38,79 @@ func TestNew(t *testing.T) {
 	check(t, isSameInt(0, len(cfg.Options)), true)
 }
 
+func TestOpen(t *testing.T) {
+	// Check of use of fallbackFile (os.Stdout) and cli.Open()
+	fp, err := Open("", os.Stdout)
+	if err != nil {
+		t.Errorf("Should have fallen back to os.Stdout, got error %s", err)
+		t.FailNow()
+	}
+	if fp != os.Stdout {
+		t.Errorf("fp should be pointing at os.Stdout")
+		t.FailNow()
+	}
+	fp, err = Open("-", os.Stdout)
+	if err != nil {
+		t.Errorf("Should have fallen back to os.Stdout, got error %s", err)
+		t.FailNow()
+	}
+	if fp != os.Stdout {
+		t.Errorf("fp should be pointing at os.Stdout")
+		t.FailNow()
+	}
+	// Check if we can open an existing file, i.e. README.md
+	fp, err = Open("README.md", os.Stdout)
+	if err != nil {
+		t.Errorf("Should have gotten pointer to README.md, got error %s", err)
+		t.FailNow()
+	}
+	if fp == os.Stdout {
+		t.Errorf("fp should be pointing at README.md NOT os.Stdout")
+		t.FailNow()
+	}
+	if fp == nil {
+		t.Errorf("fp should be pointing at README.md NOT nil")
+		t.FailNow()
+	}
+	fp.Close()
+
+	// Check to see if we fallack to os.Stdout for Create()
+	fp, err = Create("", os.Stdout)
+	if err != nil {
+		t.Errorf("Should have fallen back to os.Stdout, got error %s", err)
+		t.FailNow()
+	}
+	if fp != os.Stdout {
+		t.Errorf("fp should be pointing at os.Stdout")
+		t.FailNow()
+	}
+	fp, err = Create("-", os.Stdout)
+	if err != nil {
+		t.Errorf("Should have fallen back to os.Stdout, got error %s", err)
+		t.FailNow()
+	}
+	if fp != os.Stdout {
+		t.Errorf("fp should be pointing at os.Stdout")
+		t.FailNow()
+	}
+	// Check to see if we can open test.txt with Create()
+	fp, err = Create("test.txt", os.Stdout)
+	if err != nil {
+		t.Errorf("Should have gotten pointer to test.txt, got error %s", err)
+		t.FailNow()
+	}
+	if fp == os.Stdout {
+		t.Errorf("fp should be pointing at test.txt NOT os.Stdout")
+		t.FailNow()
+	}
+	if fp == nil {
+		t.Errorf("fp should be pointing at test.txt NOT nil")
+		t.FailNow()
+	}
+	fp.Close()
+	os.Remove("test.txt")
+}
+
 func TestMergeEnv(t *testing.T) {
 	cfg := New(appName, appName, "", "v0.0.0")
 
