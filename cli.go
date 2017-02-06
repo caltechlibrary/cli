@@ -179,3 +179,12 @@ func Create(filename string, fallbackFile *os.File) (*os.File, error) {
 	}
 	return os.Create(filename)
 }
+
+// CloseFile accepts a filename and os.File pointer, if filename is "" or "-" it skips the close
+// otherwise is does a fp.Close() on the file.
+func CloseFile(filename string, fp *os.File) error {
+	if len(filename) == 0 || filename == "-" {
+		return nil
+	}
+	return fp.Close()
+}
