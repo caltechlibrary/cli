@@ -21,6 +21,7 @@
 package cli
 
 import (
+	"bufio"
 	"flag"
 	"log"
 	"os"
@@ -187,4 +188,15 @@ func CloseFile(filename string, fp *os.File) error {
 		return nil
 	}
 	return fp.Close()
+}
+
+// ReadLines accepts a file pointer to read and returns an array of lines.
+func ReadLines(in *os.File) ([]string, error) {
+	lines := []string{}
+	scanner := bufio.NewScanner(in)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	err := scanner.Err()
+	return lines, err
 }
