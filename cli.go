@@ -200,3 +200,16 @@ func ReadLines(in *os.File) ([]string, error) {
 	err := scanner.Err()
 	return lines, err
 }
+
+// IsPipeInput accepts a file pointer and returns true if data on file pointer is
+// from a pipe or false if not. An error value is included from Stat()
+func IsPipeIn(in *os.File) (bool, error) {
+	finfo, err := in.Stat()
+	if err != nil {
+		return false, err
+	}
+	if (finfo.Mode() & os.ModeCharDevice) == 0 {
+		return true, err
+	}
+	return false, err
+}
