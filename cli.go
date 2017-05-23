@@ -70,7 +70,7 @@ func (cfg *Config) Usage() string {
 		text = append(text, cfg.DescriptionText)
 	}
 	if len(cfg.OptionsText) > 0 {
-		text = append(text, cfg.OptionsText)
+		text = append(text, cfg.OptionsText+"\n")
 	}
 	// Loop through the flags
 	flag.VisitAll(func(f *flag.Flag) {
