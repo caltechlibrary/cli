@@ -153,7 +153,7 @@ func (cfg *Config) MergeEnvBool(envVar string, flagValue bool) bool {
 func (cfg *Config) CheckOption(envVar, value string, required bool) string {
 	value = strings.TrimSpace(value)
 	if len(value) == 0 {
-		log.Printf("Missing %s_%s", strings.ToUpper(cfg.appName), strings.ToUpper(envVar))
+		log.Printf("Missing %s_%s", strings.ToUpper(cfg.EnvPrefix), strings.ToUpper(envVar))
 		if required == true {
 			os.Exit(1)
 		}
