@@ -152,11 +152,9 @@ func (cfg *Config) MergeEnvBool(envVar string, flagValue bool) bool {
 // else return  the value passed in.
 func (cfg *Config) CheckOption(envVar, value string, required bool) string {
 	value = strings.TrimSpace(value)
-	if len(value) == 0 {
+	if len(value) == 0 && required == true {
 		log.Printf("Missing %s_%s", strings.ToUpper(cfg.EnvPrefix), strings.ToUpper(envVar))
-		if required == true {
-			os.Exit(1)
-		}
+		os.Exit(1)
 	}
 	return value
 }
