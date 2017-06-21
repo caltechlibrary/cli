@@ -54,7 +54,7 @@ func New(appName, envPrefix, license, version string) *Config {
 		LicenseText:     license,
 		UsageText:       "",
 		DescriptionText: "",
-		OptionsText:     "OPTIONS\n\n",
+		OptionsText:     "OPTIONS",
 		ExampleText:     "",
 		VersionText:     appName + " " + version,
 		Options:         make(map[string]string),
@@ -64,26 +64,30 @@ func New(appName, envPrefix, license, version string) *Config {
 func (cfg *Config) Usage() string {
 	var text []string
 	if len(cfg.UsageText) > 0 {
-		text = append(text, cfg.UsageText)
+		text = append(text, cfg.UsageText+"\n\n")
 	}
 	if len(cfg.DescriptionText) > 0 {
-		text = append(text, cfg.DescriptionText)
+		text = append(text, cfg.DescriptionText+"\n\n")
 	}
 	if len(cfg.OptionsText) > 0 {
-		text = append(text, cfg.OptionsText+"\n")
+		text = append(text, cfg.OptionsText+"\n\n")
 	}
 	// Loop through the flags
+	i := 0
 	flag.VisitAll(func(f *flag.Flag) {
-		text = append(text, "\t-"+f.Name+"\t"+f.Usage)
+		text = append(text, "\t-"+f.Name+"\t"+f.Usage+"\n")
+		i++
 	})
-	if len(cfg.ExampleText) > 0 {
-		text = append(text, cfg.ExampleText)
+	if i > 0 {
+		text = append(text, "\n")
 	}
-	text = append(text, "\n")
+	if len(cfg.ExampleText) > 0 {
+		text = append(text, cfg.ExampleText+"\n\n")
+	}
 	if len(cfg.VersionText) > 0 {
 		text = append(text, cfg.VersionText)
 	}
-	return strings.Join(text, "\n")
+	return strings.Join(text, "")
 }
 
 func (cfg *Config) License() string {
