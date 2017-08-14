@@ -1,9 +1,9 @@
 
-# Todo
+# Action Items
 
 ## Bugs
 
-## Action Items
+## Next
 
 + [ ] add support for paged help (E.g. -help TERM would give you help page for TERM)
 + [ ] remove default prefix from cli.New(), i.e. prefix is always explicitly set
