@@ -13,6 +13,7 @@
 + [ ] simplify pattern for rendering cfg.UsageText, cfg.DescriptionText, cfg.ExampleText
     + could change parameters for .New() to include explicit usage page sections
     + could provide a simple apply appName function  that would replace '%s' with appName
++ [ ] add multi-option definition support and remove dependency on native flag package
 
 ## Completed
 
