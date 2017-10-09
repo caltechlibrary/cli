@@ -23,10 +23,14 @@ package cli
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 )
+
+const Version = `v0.0.2`
 
 // Config holds the merged environment and options selected when the program runs
 type Config struct {
@@ -37,28 +41,51 @@ type Config struct {
 	VersionText     string            `json:"version_text"`
 	UsageText       string            `json:"usage_text"`
 	DescriptionText string            `json:"description_text"`
-	OptionsText     string            `json:"option_text"`
-	ExampleText     string            `json:"example_text"`
-	Options         map[string]string `json:"options"`
+	OptionsLabel    string            `json:"option_label"`
+	topics          map[string]string `json:"help_pages"`
+	examples        map[string]string `json:"examples"`
+	// Options are the running options for an application, often this can be expressed as a cli
+	// parameter or an environment variable.
+	Options map[string]string `json:"options"`
 }
 
 // New returns an initialized Config structure
 func New(appName, envPrefix, license, version string) *Config {
-	if envPrefix == "" {
-		envPrefix = strings.ToUpper(appName)
-	}
+	prefix := strings.TrimSpace(envPrefix)
 	return &Config{
 		appName:         appName,
 		version:         version,
-		EnvPrefix:       strings.ToUpper(envPrefix),
+		EnvPrefix:       prefix,
 		LicenseText:     license,
 		UsageText:       "",
 		DescriptionText: "",
-		OptionsText:     "OPTIONS",
-		ExampleText:     "",
+		OptionsLabel:    "OPTIONS",
 		VersionText:     appName + " " + version,
+		topics:          make(map[string]string),
+		examples:        make(map[string]string),
 		Options:         make(map[string]string),
 	}
+}
+
+// FmtAppName takes an appName and text replacing each occurrence of %s
+// with the value of AppName.
+func (cfg *Config) FmtAppName(appName, text string) string {
+	rtext := []interface{}{}
+	c := strings.Count(text, "%s")
+	for i := 0; i < c; i++ {
+		rtext = append(rtext, appName)
+	}
+	return fmt.Sprintf(text, rtext...)
+}
+
+// AddTopic takes a topic and text and address it to the help index
+func (cfg *Config) AddHelp(topic, text string) {
+	cfg.topics[topic] = text
+}
+
+// AddExample takes a topic and example text and adds it to the examples index
+func (cfg *Config) AddExample(topic, text string) {
+	cfg.examples[topic] = text
 }
 
 func (cfg *Config) Usage() string {
@@ -69,8 +96,8 @@ func (cfg *Config) Usage() string {
 	if len(cfg.DescriptionText) > 0 {
 		text = append(text, cfg.DescriptionText+"\n\n")
 	}
-	if len(cfg.OptionsText) > 0 {
-		text = append(text, cfg.OptionsText+"\n\n")
+	if len(cfg.OptionsLabel) > 0 {
+		text = append(text, cfg.OptionsLabel+"\n\n")
 	}
 	// Loop through the flags
 	i := 0
@@ -81,8 +108,32 @@ func (cfg *Config) Usage() string {
 	if i > 0 {
 		text = append(text, "\n")
 	}
-	if len(cfg.ExampleText) > 0 {
-		text = append(text, cfg.ExampleText+"\n\n")
+	if len(cfg.topics) > 0 {
+		// Sort the topics keys
+		keys := []string{}
+		for k, _ := range cfg.topics {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		text = append(text, "Topics (e.g. -help KEYWORD)\n\n")
+		for _, k := range keys {
+			text = append(text, "+ "+k+"\n")
+		}
+		text = append(text, "\n")
+	}
+	if len(cfg.examples) > 0 {
+		// Sort the example keys
+		keys := []string{}
+		for k, _ := range cfg.examples {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		// For each sorted key add it to page.
+		text = append(text, "Examples (e.g. -example KEYWORD)\n\n")
+		for _, k := range keys {
+			text = append(text, "+ "+k+"\n")
+		}
+		text = append(text, "\n")
 	}
 	if len(cfg.VersionText) > 0 {
 		text = append(text, cfg.VersionText)
@@ -161,6 +212,48 @@ func (cfg *Config) CheckOption(envVar, value string, required bool) string {
 		os.Exit(1)
 	}
 	return value
+}
+
+// StandardOptions() processing the booleans associated with standard options and
+// any additional cli parameters in args return text as a string.
+func (cfg *Config) StandardOptions(showHelp, showExamples, showLicense, showVersion bool, args []string) string {
+	if showHelp == true {
+		if len(args) > 0 {
+			text := []string{}
+			for _, arg := range args {
+				if pg, ok := cfg.topics[arg]; ok == true {
+					text = append(text, pg+"\n\n")
+				} else {
+					text = append(text, "No information for "+arg+"\n\n")
+				}
+			}
+			return strings.Join(text, "")
+		} else {
+			return cfg.Usage()
+		}
+	}
+	if showExamples == true {
+		if len(args) > 0 {
+			text := []string{}
+			for _, arg := range args {
+				if pg, ok := cfg.examples[arg]; ok == true {
+					text = append(text, pg+"\n\n")
+				} else {
+					text = append(text, "No example for "+arg+"\n\n")
+				}
+			}
+			return strings.Join(text, "")
+		} else {
+			return cfg.Usage()
+		}
+	}
+	if showLicense == true {
+		return cfg.License()
+	}
+	if showVersion == true {
+		return cfg.Version()
+	}
+	return ""
 }
 
 // Open accepts a filename, fallbackFile (usually os.Stdout, os.Stdin, os.Stderr) and returns

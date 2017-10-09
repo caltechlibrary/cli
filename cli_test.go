@@ -52,7 +52,7 @@ func check(t *testing.T, msg string, failNow bool) {
 }
 
 func TestNew(t *testing.T) {
-	cfg := New(appName, appName, "%s %s released under a BSD License", "v0.0.0")
+	cfg := New(appName, strings.ToUpper(appName), "%s %s released under a BSD License", "v0.0.0")
 	check(t, isSameString(appName, cfg.appName), true)
 	check(t, isSameString(strings.ToUpper(appName), cfg.EnvPrefix), true)
 	check(t, isSameInt(0, len(cfg.Options)), true)
@@ -147,7 +147,7 @@ func TestMergeBool(t *testing.T) {
 	envVar := "TESTCLI_ONOFF"
 	onoff := true
 	expected := true
-	// NOTE: TESTCLI_ONOFF willnoe be set so will always return false
+	// NOTE: TESTCLI_ONOFF will not be set so will always return false
 	result := cfg.MergeEnvBool("onoff", onoff)
 	if expected != result {
 		t.Errorf("For onoff %t (env: %q), Expected %t, got %t", onoff, os.Getenv(envVar), expected, result)
@@ -158,5 +158,27 @@ func TestMergeBool(t *testing.T) {
 	result = cfg.MergeEnvBool("onoff", onoff)
 	if expected != result {
 		t.Errorf("For onoff %t (env: %q), Expected %t, got %t", onoff, os.Getenv(envVar), expected, result)
+	}
+}
+
+func TestStandardOptions(t *testing.T) {
+	cfg := New("testcli", "TESTCLI", "", "v0.0.0")
+	args := []string{}
+	showHelp := false
+	showExamples := false
+	showLicense := false
+	showVersion := false
+	text := cfg.StandardOptions(showHelp, showExamples, showLicense, showVersion, args)
+	if text != "" {
+		t.Errorf("Expected empty string, --->\n%s\n", text)
+		t.FailNow()
+	}
+	showHelp = true
+	showExamples = false
+	args = append(args, "append")
+	text = cfg.StandardOptions(showHelp, showExamples, showLicense, showVersion, args)
+	if strings.HasPrefix(text, "No Information for append") {
+		t.Errorf("Expected 'No information for append', got %q", text)
+		t.FailNow()
 	}
 }

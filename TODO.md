@@ -5,8 +5,11 @@
 
 ## Next
 
-+ [ ] add support for paged help (E.g. -help TERM would give you help page for TERM)
-+ [ ] remove default prefix from cli.New(), i.e. prefix is always explicitly set
++ [ ] add support for topic driven help pages (E.g. -help KEYWORD would give you help page for KEYWORD)
++ [ ] add support for topic driven examples pages (E.g. -example KEYWORD would give you example page for KEYWORD)
++ [ ] add StandardOptions() for handling showHelp, showExamples, showLicense, and showVersion
++ [ ] add a way to format AppName into a text (e.g. DescriptionText, UsageText)
++ [ ] add a way of adding topic drive help and example pages 
 
 ## Someday, Maybe
 
@@ -17,5 +20,6 @@
 
 ## Completed
 
++ [x] remove default prefix from cli.New(), i.e. prefix should always explicitly set
 + [x] add method for common handling of input, output and Stderr
     + if filename specified the return file handle for it otherwise return handle for stdin/stdout/stderr as fallback
