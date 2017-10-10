@@ -26,7 +26,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"strings"
 )
 
@@ -41,7 +40,8 @@ type Config struct {
 	VersionText     string            `json:"version_text"`
 	UsageText       string            `json:"usage_text"`
 	DescriptionText string            `json:"description_text"`
-	OptionsLabel    string            `json:"option_label"`
+	ExampleText     string            `json:"example_text"`
+	OptionText      string            `json:"option_text"`
 	topics          map[string]string `json:"help_pages"`
 	examples        map[string]string `json:"examples"`
 	// Options are the running options for an application, often this can be expressed as a cli
@@ -50,32 +50,23 @@ type Config struct {
 }
 
 // New returns an initialized Config structure
-func New(appName, envPrefix, license, version string) *Config {
+func New(appName, envPrefix, version string) *Config {
 	prefix := strings.TrimSpace(envPrefix)
 	return &Config{
 		appName:         appName,
 		version:         version,
 		EnvPrefix:       prefix,
-		LicenseText:     license,
+		LicenseText:     "",
 		UsageText:       "",
 		DescriptionText: "",
-		OptionsLabel:    "OPTIONS",
+		OptionText:      "",
+		ExampleText:     "",
 		VersionText:     appName + " " + version,
 		topics:          make(map[string]string),
 		examples:        make(map[string]string),
-		Options:         make(map[string]string),
+		// Data used when processing options
+		Options: make(map[string]string),
 	}
-}
-
-// FmtAppName takes an appName and text replacing each occurrence of %s
-// with the value of AppName.
-func (cfg *Config) FmtAppName(appName, text string) string {
-	rtext := []interface{}{}
-	c := strings.Count(text, "%s")
-	for i := 0; i < c; i++ {
-		rtext = append(rtext, appName)
-	}
-	return fmt.Sprintf(text, rtext...)
 }
 
 // AddTopic takes a topic and text and address it to the help index
@@ -83,9 +74,37 @@ func (cfg *Config) AddHelp(topic, text string) {
 	cfg.topics[topic] = text
 }
 
+// Help formats a help topics
+func (cfg *Config) Help(topics ...string) string {
+	text := []string{}
+	for _, topic := range topics {
+		if pg, ok := cfg.topics[topic]; ok == true {
+			text = append(text, topic)
+			text = append(text, pg)
+		} else {
+			text = append(text, fmt.Sprintf("%q not found", topic))
+		}
+	}
+	return strings.Join(text, "") + "\n\n"
+}
+
 // AddExample takes a topic and example text and adds it to the examples index
 func (cfg *Config) AddExample(topic, text string) {
 	cfg.examples[topic] = text
+}
+
+// Example formats example topics
+func (cfg *Config) Example(topics ...string) string {
+	text := []string{}
+	for _, topic := range topics {
+		if pg, ok := cfg.topics[topic]; ok == true {
+			text = append(text, topic)
+			text = append(text, pg)
+		} else {
+			text = append(text, fmt.Sprintf("%q not found", topic))
+		}
+	}
+	return strings.Join(text, "\n\n") + "\n\n"
 }
 
 func (cfg *Config) Usage() string {
@@ -96,10 +115,11 @@ func (cfg *Config) Usage() string {
 	if len(cfg.DescriptionText) > 0 {
 		text = append(text, cfg.DescriptionText+"\n\n")
 	}
-	if len(cfg.OptionsLabel) > 0 {
-		text = append(text, cfg.OptionsLabel+"\n\n")
+	if len(cfg.OptionText) > 0 {
+		text = append(text, cfg.OptionText+"\n\n")
 	}
-	// Loop through the flags
+
+	// Loop through the flags describing cli options
 	i := 0
 	flag.VisitAll(func(f *flag.Flag) {
 		text = append(text, "\t-"+f.Name+"\t"+f.Usage+"\n")
@@ -108,32 +128,17 @@ func (cfg *Config) Usage() string {
 	if i > 0 {
 		text = append(text, "\n")
 	}
+
+	if len(cfg.ExampleText) > 0 {
+		text = append(text, cfg.ExampleText+"\n\n")
+	}
+
+	// Display additional topics and examples if available
 	if len(cfg.topics) > 0 {
-		// Sort the topics keys
-		keys := []string{}
-		for k, _ := range cfg.topics {
-			keys = append(keys, k)
-		}
-		sort.Strings(keys)
-		text = append(text, "Topics (e.g. -help KEYWORD)\n\n")
-		for _, k := range keys {
-			text = append(text, "+ "+k+"\n")
-		}
-		text = append(text, "\n")
+		text = append(text, fmtTopics("Topic(s) ", cfg.topics))
 	}
 	if len(cfg.examples) > 0 {
-		// Sort the example keys
-		keys := []string{}
-		for k, _ := range cfg.examples {
-			keys = append(keys, k)
-		}
-		sort.Strings(keys)
-		// For each sorted key add it to page.
-		text = append(text, "Examples (e.g. -example KEYWORD)\n\n")
-		for _, k := range keys {
-			text = append(text, "+ "+k+"\n")
-		}
-		text = append(text, "\n")
+		text = append(text, fmtTopics("Example(s) ", cfg.examples))
 	}
 	if len(cfg.VersionText) > 0 {
 		text = append(text, cfg.VersionText)
@@ -219,30 +224,14 @@ func (cfg *Config) CheckOption(envVar, value string, required bool) string {
 func (cfg *Config) StandardOptions(showHelp, showExamples, showLicense, showVersion bool, args []string) string {
 	if showHelp == true {
 		if len(args) > 0 {
-			text := []string{}
-			for _, arg := range args {
-				if pg, ok := cfg.topics[arg]; ok == true {
-					text = append(text, pg+"\n\n")
-				} else {
-					text = append(text, "No information for "+arg+"\n\n")
-				}
-			}
-			return strings.Join(text, "")
+			return cfg.Help(args...)
 		} else {
 			return cfg.Usage()
 		}
 	}
 	if showExamples == true {
 		if len(args) > 0 {
-			text := []string{}
-			for _, arg := range args {
-				if pg, ok := cfg.examples[arg]; ok == true {
-					text = append(text, pg+"\n\n")
-				} else {
-					text = append(text, "No example for "+arg+"\n\n")
-				}
-			}
-			return strings.Join(text, "")
+			return cfg.Example(args...)
 		} else {
 			return cfg.Usage()
 		}

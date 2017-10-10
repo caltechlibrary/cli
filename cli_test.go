@@ -52,7 +52,9 @@ func check(t *testing.T, msg string, failNow bool) {
 }
 
 func TestNew(t *testing.T) {
-	cfg := New(appName, strings.ToUpper(appName), "%s %s released under a BSD License", "v0.0.0")
+	licenseString := "%s %s released under a BSD License"
+	cfg := New(appName, strings.ToUpper(appName), "v0.0.0")
+	cfg.LicenseText = strings.Replace(licenseString, "%s", appName, -1)
 	check(t, isSameString(appName, cfg.appName), true)
 	check(t, isSameString(strings.ToUpper(appName), cfg.EnvPrefix), true)
 	check(t, isSameInt(0, len(cfg.Options)), true)
@@ -162,7 +164,7 @@ func TestMergeBool(t *testing.T) {
 }
 
 func TestStandardOptions(t *testing.T) {
-	cfg := New("testcli", "TESTCLI", "", "v0.0.0")
+	cfg := New("testcli", "TESTCLI", "v0.0.0")
 	args := []string{}
 	showHelp := false
 	showExamples := false
