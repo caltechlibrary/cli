@@ -62,8 +62,8 @@ func New(appName, envPrefix, version string) *Config {
 		OptionText:      "",
 		ExampleText:     "",
 		VersionText:     appName + " " + version,
-		topics:          make(map[string]string),
-		examples:        make(map[string]string),
+		topics:          map[string]string{},
+		examples:        map[string]string{},
 		// Data used when processing options
 		Options: make(map[string]string),
 	}
@@ -79,7 +79,6 @@ func (cfg *Config) Help(topics ...string) string {
 	text := []string{}
 	for _, topic := range topics {
 		if pg, ok := cfg.topics[topic]; ok == true {
-			text = append(text, topic)
 			text = append(text, pg)
 		} else {
 			text = append(text, fmt.Sprintf("%q not found", topic))
@@ -98,7 +97,6 @@ func (cfg *Config) Example(topics ...string) string {
 	text := []string{}
 	for _, topic := range topics {
 		if pg, ok := cfg.topics[topic]; ok == true {
-			text = append(text, topic)
 			text = append(text, pg)
 		} else {
 			text = append(text, fmt.Sprintf("%q not found", topic))
