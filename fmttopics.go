@@ -20,12 +20,13 @@ func fmtTopics(label string, topics map[string]string) string {
 	last_i := len(keys) - 1
 	for i, k := range keys {
 		text = append(text, k)
-		if i > 0 && i < last_i {
+		if last_i > 0 && i < last_i {
 			text = append(text, ", ")
 			j += 2
 		}
 		if i == last_i {
 			text = append(text, ".")
+			j += 1
 		} else {
 			// Wrap the line if needed
 			j += len(k)
