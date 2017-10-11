@@ -96,7 +96,7 @@ func (cfg *Config) AddExample(topic, text string) {
 func (cfg *Config) Example(topics ...string) string {
 	text := []string{}
 	for _, topic := range topics {
-		if pg, ok := cfg.topics[topic]; ok == true {
+		if pg, ok := cfg.examples[topic]; ok == true {
 			text = append(text, pg)
 		} else {
 			text = append(text, fmt.Sprintf("%q not found", topic))
@@ -133,10 +133,10 @@ func (cfg *Config) Usage() string {
 
 	// Display additional topics and examples if available
 	if len(cfg.topics) > 0 {
-		text = append(text, fmtTopics("Topic(s) ", cfg.topics))
+		text = append(text, fmtTopics("Related topics: ", cfg.topics))
 	}
 	if len(cfg.examples) > 0 {
-		text = append(text, fmtTopics("Example(s) ", cfg.examples))
+		text = append(text, fmtTopics("Related examples: ", cfg.examples))
 	}
 	if len(cfg.VersionText) > 0 {
 		text = append(text, cfg.VersionText)
