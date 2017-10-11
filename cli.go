@@ -108,13 +108,13 @@ func (cfg *Config) Example(topics ...string) string {
 func (cfg *Config) Usage() string {
 	var text []string
 	if len(cfg.UsageText) > 0 {
-		text = append(text, cfg.UsageText+"\n\n")
+		text = append(text, cfg.UsageText)
 	}
 	if len(cfg.DescriptionText) > 0 {
-		text = append(text, cfg.DescriptionText+"\n\n")
+		text = append(text, cfg.DescriptionText)
 	}
 	if len(cfg.OptionText) > 0 {
-		text = append(text, cfg.OptionText+"\n\n")
+		text = append(text, cfg.OptionText)
 	}
 
 	// Loop through the flags describing cli options
@@ -128,7 +128,7 @@ func (cfg *Config) Usage() string {
 	}
 
 	if len(cfg.ExampleText) > 0 {
-		text = append(text, cfg.ExampleText+"\n\n")
+		text = append(text, cfg.ExampleText)
 	}
 
 	// Display additional topics and examples if available
