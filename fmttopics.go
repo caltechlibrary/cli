@@ -17,13 +17,14 @@ func fmtTopics(label string, topics map[string]string) string {
 
 	sort.Strings(keys)
 	j := len(label)
+	last_i := len(keys) - 1
 	for i, k := range keys {
-		if i > 0 {
+		text = append(text, k)
+		if i > 0 && i < last_i {
 			text = append(text, ", ")
 			j += 2
 		}
-		text = append(text, k)
-		if i == len(keys)-1 {
+		if i == last_i {
 			text = append(text, ".")
 		} else {
 			// Wrap the line if needed
