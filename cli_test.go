@@ -134,7 +134,7 @@ func TestOpen(t *testing.T) {
 }
 
 func TestMergeEnv(t *testing.T) {
-	cfg := New(appName, appName, "", "v0.0.0")
+	cfg := New(appName, appName, "v0.0.0")
 
 	for _, term := range []string{"API_URL", "DBNAME", "BLEVE", "HTDOCS", "TEMPLATE_PATH", "SITE_URL"} {
 		if s := cfg.MergeEnv(term, "test_"+term); strings.Compare(s, "test_"+term) != 0 {
@@ -145,7 +145,7 @@ func TestMergeEnv(t *testing.T) {
 }
 
 func TestMergeBool(t *testing.T) {
-	cfg := New("testcli", "TESTCLI", "", "v0.0.0")
+	cfg := New("testcli", "TESTCLI", "v0.0.0")
 	envVar := "TESTCLI_ONOFF"
 	onoff := true
 	expected := true

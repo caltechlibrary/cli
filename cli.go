@@ -44,6 +44,7 @@ type Config struct {
 	OptionText      string            `json:"option_text"`
 	topics          map[string]string `json:"help_pages"`
 	examples        map[string]string `json:"examples"`
+
 	// Options are the running options for an application, often this can be expressed as a cli
 	// parameter or an environment variable.
 	Options map[string]string `json:"options"`
@@ -77,12 +78,20 @@ func (cfg *Config) AddHelp(topic, text string) {
 // Help formats a help topics
 func (cfg *Config) Help(topics ...string) string {
 	text := []string{}
+	notFound := false
+	if len(topics) == 0 {
+		return fmtTopics(fmt.Sprintf("Try '%s -help TOPIC' where TOPIC is one of ", cfg.appName), cfg.topics)
+	}
 	for _, topic := range topics {
 		if pg, ok := cfg.topics[topic]; ok == true {
 			text = append(text, pg)
 		} else {
 			text = append(text, fmt.Sprintf("%q not found", topic))
+			notFound = true
 		}
+	}
+	if notFound == true {
+		text = append(text, fmtTopics(fmt.Sprintf("Try '%s -help TOPIC' where TOPIC is one of ", cfg.appName), cfg.topics))
 	}
 	return strings.Join(text, "") + "\n\n"
 }
@@ -95,12 +104,20 @@ func (cfg *Config) AddExample(topic, text string) {
 // Example formats example topics
 func (cfg *Config) Example(topics ...string) string {
 	text := []string{}
+	notFound := false
+	if len(topics) == 0 {
+		return fmtTopics(fmt.Sprintf("Try '%s -example TOPIC' where TOPIC is one of ", cfg.appName), cfg.examples)
+	}
 	for _, topic := range topics {
 		if pg, ok := cfg.examples[topic]; ok == true {
 			text = append(text, pg)
 		} else {
 			text = append(text, fmt.Sprintf("%q not found", topic))
+			notFound = true
 		}
+	}
+	if notFound == true {
+		text = append(text, fmtTopics(fmt.Sprintf("Try '%s -help TOPIC' where TOPIC is one of ", cfg.appName), cfg.topics))
 	}
 	return strings.Join(text, "\n\n") + "\n\n"
 }
