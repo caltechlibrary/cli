@@ -29,7 +29,7 @@ import (
 	"strings"
 )
 
-const Version = `v0.0.2`
+const Version = `v0.0.3`
 
 // Config holds the merged environment and options selected when the program runs
 type Config struct {
