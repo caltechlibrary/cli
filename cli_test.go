@@ -184,3 +184,38 @@ func TestStandardOptions(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestPopArg(t *testing.T) {
+	args := []string{
+		"one",
+		"two",
+		"three",
+	}
+	expected := args[0]
+	expectedL := len(args) - 1
+	r, args := PopArg(args)
+	if r != expected {
+		t.Errorf("expected %q, got %q", expected, r)
+	}
+	if len(args) != expectedL {
+		t.Errorf("expected args length to be %d, got %d", expectedL, len(args))
+	}
+	expected = args[0]
+	expectedL = len(args) - 1
+	r, args = PopArg(args)
+	if r != expected {
+		t.Errorf("expected %q, got %q", expected, r)
+	}
+	if len(args) != expectedL {
+		t.Errorf("expected args length to be %d, got %d", expectedL, len(args))
+	}
+	expected = args[0]
+	expectedL = len(args) - 1
+	r, args = PopArg(args)
+	if r != expected {
+		t.Errorf("expected %q, got %q", expected, r)
+	}
+	if args != nil {
+		t.Errorf("expected args to be nil, got %+v", args)
+	}
+}

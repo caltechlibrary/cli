@@ -309,3 +309,20 @@ func IsPipe(in *os.File) bool {
 	}
 	return false
 }
+
+// OpArg takes an array of strings and if array is not empty returns a string and the rest of the args.
+// If array is empty it returns an empty string, when there are no more args it returns nil for the
+// arg parameter
+func PopArg(args []string) (string, []string) {
+	var s string
+
+	if args != nil && len(args) >= 1 {
+		s = args[0]
+		if len(args) > 1 {
+			args = args[1:]
+		} else {
+			args = nil
+		}
+	}
+	return s, args
+}
