@@ -9,7 +9,7 @@ import (
 // taking into consideration the state of quiet
 func OnError(out *os.File, err error, quiet bool) {
 	if err != nil && quiet == false {
-		fmt.Fprint(out, "%s\n", err)
+		fmt.Fprintf(out, "%s\n", err)
 	}
 }
 
@@ -19,7 +19,7 @@ func OnError(out *os.File, err error, quiet bool) {
 func ExitOnError(out *os.File, err error, quiet bool) {
 	if err != nil {
 		if quiet == false {
-			fmt.Fprint(out, "%s\n", err)
+			fmt.Fprintf(out, "%s\n", err)
 		}
 		os.Exit(1)
 	}
