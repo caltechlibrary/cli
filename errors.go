@@ -8,7 +8,7 @@ import (
 // OnError writes an error message to out if err != nil
 // taking into consideration the state of quiet
 func OnError(out *os.File, err error, quiet bool) {
-	if quiet == false {
+	if err != nil && quiet == false {
 		fmt.Fprint(out, "%s\n", err)
 	}
 }
