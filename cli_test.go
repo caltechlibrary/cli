@@ -23,6 +23,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"path"
 	"strings"
 	"testing"
 )
@@ -217,5 +218,95 @@ func TestPopArg(t *testing.T) {
 	}
 	if args != nil {
 		t.Errorf("expected args to be nil, got %+v", args)
+	}
+}
+
+func TestApp(t *testing.T) {
+	appName := path.Base(os.Args[0])
+
+	app := NewCli(Version)
+	if app == nil {
+		t.Errorf("Expected an 'App' struct, got nil")
+		t.FailNow()
+	}
+
+	version := app.Version()
+	expectedS := fmt.Sprintf("%s %s", appName, Version)
+	if expectedS != version {
+		t.Errorf("expected %s, got %s", expectedS, version)
+	}
+
+	userName := os.Getenv("USER")
+	usage := "set USER from the environment"
+	err := app.EnvStringVar(&userName, "USER", userName, usage)
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+	gotS := app.Env("USER")
+	expectedS = usage
+	if expectedS != gotS {
+		t.Errorf("expected %q, got %q", expectedS, gotS)
+	}
+	err = app.ParseEnv()
+	if err != nil {
+		t.Errorf("expected ParseEnv() to return nil, got %s", err)
+		t.FailNow()
+	}
+	// Now set a new default of "jane.doe"
+	expectedUserS := "jane.doe"
+	err = app.EnvStringVar(&userName, "USER", expectedUserS, usage)
+	if err != nil {
+		t.Errorf("EnvStringVar() returned an error, %s", err)
+		t.FailNow()
+	}
+
+	e, err := app.EnvAttribute("USER")
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	gotS = e.StringValue
+	if expectedUserS != gotS {
+		t.Errorf("expected %q, got %q", expectedUserS, gotS)
+	}
+	if userName != gotS {
+		t.Errorf("expected %q, got %q", userName, gotS)
+	}
+
+	// We expected to get the current user when we ParseEnv
+	expectedUserS = os.Getenv("USER")
+	err = app.ParseEnv()
+	if err != nil {
+		t.Errorf("ParseEnv() returned an error, %s", err)
+		t.FailNow()
+	}
+	// After ParseEnv(), userName should have been updated
+	gotS = app.Getenv("USER")
+	if expectedUserS != gotS {
+		t.Errorf("expected %q, got %q", expectedUserS, gotS)
+	}
+
+	e, err = app.EnvAttribute("USER")
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	if expectedUserS != e.StringValue {
+		t.Errorf("expected %q, got %q", expectedUserS, e.StringValue)
+	}
+
+	expectedUserS = "bessie.smith"
+	expectedS = "set the username overridding the enviroment"
+	app.StringVar(&userName, "u,user", expectedUserS, expectedS)
+	gotS = app.Option("u")
+	if expectedS != gotS {
+		t.Errorf("expected %q, got %q", expectedS, gotS)
+	}
+	gotS = app.Option("user")
+	if expectedS != gotS {
+		t.Errorf("expected %q, got %q", expectedS, gotS)
+	}
+	if expectedUserS != userName {
+		t.Errorf("expected %s, got %s", expectedUserS, userName)
 	}
 }

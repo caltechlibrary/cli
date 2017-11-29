@@ -7,6 +7,7 @@
 
 ## Someday, Maybe
 
++ [ ] a cli.GenerateCmd tgat would create a skelaton app based on options and exported items in package
 + [ ] Develop cli.App model that works for various tools
     + In, Out, Err for stdin, stdout, stderr as defined by app
          + In, Out, Err could be io.Reader, io.Writer, io.Writer interfaces
