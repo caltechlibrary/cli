@@ -964,7 +964,7 @@ func padRight(s, p string, cnt int) string {
 // the application's metadata like app name, version, options, actions, etc.
 func (c *Cli) Usage(w io.Writer) {
 	var parts []string
-	parts = append(parts, appName)
+	parts = append(parts, c.appName)
 	if len(c.options) > 0 {
 		parts = append(parts, "[OPTIONS]")
 	}
