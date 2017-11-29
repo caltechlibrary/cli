@@ -8,14 +8,15 @@
 
 ## Someday, Maybe
 
-+ [ ] add a way to format AppName into a text (e.g. DescriptionText, UsageText)
 + [ ] simplify pattern for rendering cfg.UsageText, cfg.DescriptionText, cfg.ExampleText
     + could change parameters for .New() to include explicit usage page sections
     + could provide a simple apply appName function  that would replace '%s' with appName
 + [ ] add multi-option definition support and remove dependency on native flag package
++ [ ] think about a more genral App model based on what I've learned from focusing on the Configuration info in a cli app
 
 ## Completed
 
++ [x] add a way to format AppName into a text (e.g. DescriptionText, UsageText)
 + [x] add support for topic driven help pages (E.g. -help KEYWORD would give you help page for KEYWORD)
 + [x] add support for topic driven examples pages (E.g. -example KEYWORD would give you example page for KEYWORD)
 + [x] add StandardOptions() for handling showHelp, showExamples, showLicense, and showVersion
