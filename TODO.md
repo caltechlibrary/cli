@@ -5,14 +5,22 @@
 
 ## Next
 
-
 ## Someday, Maybe
 
++ [ ] Develop cli.App model that works for various tools
+    + In, Out, Err for stdin, stdout, stderr as defined by app
+         + In, Out, Err could be io.Reader, io.Writer, io.Writer interfaces
+    + Documentation map for docs
+    + Vocabulary that maps functions to parameters like git, dataset commands
+    + Auto generate a usage statement based on Vocabulary and flags
+    + Set License, Description texts
+    + Links topic pages (e.g. examples and detail explanations)
+    + Should beable to generate a cli skeleton easily for building cli
++ [ ] Need to word wrap output of cli help, usage, etc. based on console width and height
 + [ ] simplify pattern for rendering cfg.UsageText, cfg.DescriptionText, cfg.ExampleText
     + could change parameters for .New() to include explicit usage page sections
     + could provide a simple apply appName function  that would replace '%s' with appName
 + [ ] add multi-option definition support and remove dependency on native flag package
-+ [ ] think about a more genral App model based on what I've learned from focusing on the Configuration info in a cli app
 
 ## Completed
 
