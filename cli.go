@@ -384,11 +384,11 @@ type EnvAttribute struct {
 // Cli models the metadata for running a common cli program
 type Cli struct {
 	// In is usually set to os.Stdin
-	In io.Reader
+	In *os.File
 	// Out is usually set to os.Stdout
-	Out io.Writer
+	Out *os.File
 	// Err is usually set to os.Stderr
-	Err io.Writer
+	Err *os.File
 	// Documentation specific help pages, e.g. -help example1
 	Documentation map[string][]byte
 
