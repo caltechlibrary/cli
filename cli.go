@@ -909,8 +909,10 @@ func (c *Cli) Args() []string {
 }
 
 // Add Params documents any parameters not defined as Options or Actions, it is an orders list of strings
-func (c *Cli) AddParams(usage []string) {
-	c.params = usage
+func (c *Cli) AddParams(params ...string) {
+	for _, param := range params {
+		c.params = append(c.params, param)
+        }
 }
 
 // AddAction associates a wrapping function with a action name, the wrapping function
