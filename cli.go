@@ -34,7 +34,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.5-dev`
+const Version = `v0.0.5`
 
 // Config holds the merged environment and options selected when the program runs
 // DEPRECIATED
@@ -429,6 +429,11 @@ func NewCli(version string) *Cli {
 	}
 }
 
+// AppName returns the application name as a string
+func (c *Cli) AppName() string {
+	return c.appName
+}
+
 // AddHelp takes a string keyword and byte slice of content and
 // updates the Documentation attribute
 func (c *Cli) AddHelp(keyword string, usage []byte) error {
@@ -441,12 +446,18 @@ func (c *Cli) AddHelp(keyword string, usage []byte) error {
 }
 
 // Help returns documentation on a topic
-func (c *Cli) Help(keyword string) string {
-	usage, ok := c.Documentation[keyword]
-	if ok == false {
-		return fmt.Sprintf("%q not documented", keyword)
+func (c *Cli) Help(keywords ...string) string {
+	var sections []string
+
+	for _, keyword := range keywords {
+		usage, ok := c.Documentation[keyword]
+		if ok == false {
+			sections = append(sections, fmt.Sprintf("%q not documented", keyword))
+			continue
+		}
+		sections = append(sections, fmt.Sprintf("%s\n\n%s", strings.ToUpper(keyword), usage))
 	}
-	return fmt.Sprintf("%s", usage)
+	return strings.Join(sections, "\n\n")
 }
 
 // BoolVar updates c.options doc strings, then splits options and calls flag.BoolVar()
