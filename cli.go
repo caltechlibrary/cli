@@ -321,7 +321,7 @@ func IsPipe(in *os.File) bool {
 	return false
 }
 
-// OpArg takes an array of strings and if array is not empty returns a string and the rest of the args.
+// PopArg takes an array of strings and if array is not empty returns a string and the rest of the args.
 // If array is empty it returns an empty string, when there are no more args it returns nil for the
 // arg parameter
 func PopArg(args []string) (string, []string) {
@@ -387,8 +387,8 @@ type Cli struct {
 	In *os.File
 	// Out is usually set to os.Stdout
 	Out *os.File
-	// Err is usually set to os.Stderr
-	Err *os.File
+	// Eout is usually set to os.Stderr
+	Eout *os.File
 	// Documentation specific help pages, e.g. -help example1
 	Documentation map[string][]byte
 
@@ -418,7 +418,7 @@ func NewCli(version string) *Cli {
 	return &Cli{
 		In:            os.Stdin,
 		Out:           os.Stdout,
-		Err:           os.Stderr,
+		Eout:          os.Stderr,
 		Documentation: documentation,
 		appName:       appName,
 		version:       fmt.Sprintf("%s %s", appName, version),
@@ -897,16 +897,16 @@ func (c *Cli) Actions() map[string]string {
 // has a corresponding action. Returns an int suitable to passing to os.Exit()
 func (c *Cli) Run(args []string) int {
 	if len(args) == 0 {
-		fmt.Fprintf(c.Err, "Nothing to do\n")
+		fmt.Fprintf(c.Eout, "Nothing to do\n")
 		return 1
 	}
 	verb := strings.TrimSpace(args[0])
 	action, ok := c.actions[verb]
 	if ok == false {
-		fmt.Fprintf(c.Err, "do not known how to %q\n", verb)
+		fmt.Fprintf(c.Eout, "do not known how to %q\n", verb)
 		return 1
 	}
-	return action.Fn(c.In, c.Out, c.Err, args)
+	return action.Fn(c.In, c.Out, c.Eout, args)
 }
 
 func padRight(s, p string, maxWidth int) string {
