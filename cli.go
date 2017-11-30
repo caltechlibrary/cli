@@ -984,7 +984,7 @@ func (c *Cli) Usage(w io.Writer) {
 	} else if len(c.params) > 0 {
 		parts = append(parts, c.params...)
 	}
-	fmt.Fprintf(w, "USAGE: %s\n\n", parts)
+	fmt.Fprintf(w, "\nUSAGE: %s\n\n", strings.Join(parts, " "))
 
 	if section, ok := c.Documentation["description"]; ok == true {
 		fmt.Fprintf(w, "SYNOPSIS\n%s\n\n", section)
@@ -1062,9 +1062,11 @@ func (c *Cli) Usage(w io.Writer) {
 				keys = append(keys, k)
 			}
 		}
+		if len(keys) > 0 {
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
 		fmt.Fprintf(w, "See %s -help TOPIC for topics - %s\n\n", c.appName, strings.Join(keys, ", "))
+		}
 	}
 
 	fmt.Fprintf(w, "%s\n", c.version)
