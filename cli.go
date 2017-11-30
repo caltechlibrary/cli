@@ -989,7 +989,7 @@ func (c *Cli) Usage(w io.Writer) {
 	fmt.Fprintf(w, "\nUSAGE: %s\n\n", strings.Join(parts, " "))
 
 	if section, ok := c.Documentation["description"]; ok == true {
-		fmt.Fprintf(w, "SYNOPSIS\n%s\n\n", section)
+		fmt.Fprintf(w, "SYNOPSIS\n\n%s\n\n", section)
 	}
 
 	if len(c.env) > 0 {
