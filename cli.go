@@ -460,14 +460,9 @@ func (c *Cli) Help(keywords ...string) string {
 	return strings.Join(sections, "\n\n")
 }
 
-// BoolVar updates c.options doc strings, then splits options and calls flag.BoolVar()
-func (c *Cli) BoolVar(p *bool, names string, value bool, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
+func splitOps(names string) []string {
+	var ops []string
+
 	switch {
 	case strings.Contains(names, ","):
 		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
@@ -478,30 +473,43 @@ func (c *Cli) BoolVar(p *bool, names string, value bool, usage string) {
 	default:
 		ops = []string{names}
 	}
+	// clean up spaces and dash prefixes
+	for i := 0; i < len(ops); i++ {
+		op := strings.Trim(ops[i], "- ")
+		ops[i] = op
+	}
+	return ops
+}
+
+func opsLabel(ops []string) string {
+	parts := []string{}
 	for _, op := range ops {
-		op = strings.TrimSpace(op)
+		parts = append(parts, "-"+op)
+	}
+	return strings.Join(parts, ", ")
+}
+
+// BoolVar updates c.options doc strings, then splits options and calls flag.BoolVar()
+func (c *Cli) BoolVar(p *bool, names string, value bool, usage string) {
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
+	for _, op := range ops {
 		flag.BoolVar(p, op, value, usage)
 	}
 }
 
 // IntVar updates c.options doc strings, then splits options and calls flag.IntVar()
 func (c *Cli) IntVar(p *int, names string, value int, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
-	switch {
-	case strings.Contains(names, ","):
-		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
-		ops = strings.Split(names, ",")
-	case strings.Contains(names, " "):
-		// If we have a space separated list of options
-		ops = strings.Split(names, ",")
-	default:
-		ops = []string{names}
-	}
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
 	for _, op := range ops {
 		op = strings.TrimSpace(op)
 		flag.IntVar(p, op, value, usage)
@@ -510,22 +518,12 @@ func (c *Cli) IntVar(p *int, names string, value int, usage string) {
 
 // Int64Var updates c.options doc strings, then splits options and calls flag.Int64Var()
 func (c *Cli) Int64Var(p *int64, names string, value int64, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
-	switch {
-	case strings.Contains(names, ","):
-		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
-		ops = strings.Split(names, ",")
-	case strings.Contains(names, " "):
-		// If we have a space separated list of options
-		ops = strings.Split(names, ",")
-	default:
-		ops = []string{names}
-	}
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
 	for _, op := range ops {
 		op = strings.TrimSpace(op)
 		flag.Int64Var(p, op, value, usage)
@@ -534,22 +532,12 @@ func (c *Cli) Int64Var(p *int64, names string, value int64, usage string) {
 
 // UintVar updates c.options doc strings, then splits options and calls flag.Int64Var()
 func (c *Cli) UintVar(p *uint, names string, value uint, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
-	switch {
-	case strings.Contains(names, ","):
-		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
-		ops = strings.Split(names, ",")
-	case strings.Contains(names, " "):
-		// If we have a space separated list of options
-		ops = strings.Split(names, ",")
-	default:
-		ops = []string{names}
-	}
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
 	for _, op := range ops {
 		op = strings.TrimSpace(op)
 		flag.UintVar(p, op, value, usage)
@@ -558,22 +546,12 @@ func (c *Cli) UintVar(p *uint, names string, value uint, usage string) {
 
 // Uint64Var updates c.options doc strings, then splits options and calls flag.Int64Var()
 func (c *Cli) Uint64Var(p *uint64, names string, value uint64, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
-	switch {
-	case strings.Contains(names, ","):
-		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
-		ops = strings.Split(names, ",")
-	case strings.Contains(names, " "):
-		// If we have a space separated list of options
-		ops = strings.Split(names, ",")
-	default:
-		ops = []string{names}
-	}
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
 	for _, op := range ops {
 		op = strings.TrimSpace(op)
 		flag.Uint64Var(p, op, value, usage)
@@ -582,22 +560,12 @@ func (c *Cli) Uint64Var(p *uint64, names string, value uint64, usage string) {
 
 // StringVar updates c.options doc strings, then splits options and calls flag.StringVar()
 func (c *Cli) StringVar(p *string, names string, value string, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
-	switch {
-	case strings.Contains(names, ","):
-		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
-		ops = strings.Split(names, ",")
-	case strings.Contains(names, " "):
-		// If we have a space separated list of options
-		ops = strings.Split(names, ",")
-	default:
-		ops = []string{names}
-	}
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
 	for _, op := range ops {
 		op = strings.TrimSpace(op)
 		flag.StringVar(p, op, value, usage)
@@ -606,22 +574,12 @@ func (c *Cli) StringVar(p *string, names string, value string, usage string) {
 
 // Float64Var updates c.options doc strings, then splits options and calls flag.Float64Var()
 func (c *Cli) Float64Var(p *float64, names string, value float64, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
-	switch {
-	case strings.Contains(names, ","):
-		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
-		ops = strings.Split(names, ",")
-	case strings.Contains(names, " "):
-		// If we have a space separated list of options
-		ops = strings.Split(names, ",")
-	default:
-		ops = []string{names}
-	}
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
 	for _, op := range ops {
 		op = strings.TrimSpace(op)
 		flag.Float64Var(p, op, value, usage)
@@ -630,22 +588,12 @@ func (c *Cli) Float64Var(p *float64, names string, value float64, usage string) 
 
 // DurationVar updates c.options doc strings, then splits options and calls flag.DurationVar()
 func (c *Cli) DurationVar(p *time.Duration, names string, value time.Duration, usage string) {
-	var (
-		ops []string
-	)
-	// Save our internal option documentation
-	c.options[names] = usage
-	// Prep and hand of to the flag package for eventual processing
-	switch {
-	case strings.Contains(names, ","):
-		// If we have a comma separated list of options, e.g. "h,help" for -h, -help
-		ops = strings.Split(names, ",")
-	case strings.Contains(names, " "):
-		// If we have a space separated list of options
-		ops = strings.Split(names, ",")
-	default:
-		ops = []string{names}
-	}
+	// Prep to hand off to the flag package
+	ops := splitOps(names)
+	// Save for our internal option documentation
+	label := opsLabel(ops)
+	c.options[label] = usage
+	// process with flag package
 	for _, op := range ops {
 		op = strings.TrimSpace(op)
 		flag.DurationVar(p, op, value, usage)
@@ -654,11 +602,7 @@ func (c *Cli) DurationVar(p *time.Duration, names string, value time.Duration, u
 
 // Option returns an option's document string or unsupported string
 func (c *Cli) Option(op string) string {
-	if strings.HasPrefix(op, "--") {
-		op = strings.TrimPrefix(op, "--")
-	} else if strings.HasPrefix(op, "-") {
-		op = strings.TrimPrefix(op, "-")
-	}
+	op = strings.Trim(op, " ")
 	for k, doc := range c.options {
 		if strings.Contains(k, op) {
 			return doc
@@ -912,7 +856,7 @@ func (c *Cli) Args() []string {
 func (c *Cli) AddParams(params ...string) {
 	for _, param := range params {
 		c.params = append(c.params, param)
-        }
+	}
 }
 
 // AddAction associates a wrapping function with a action name, the wrapping function
@@ -1066,9 +1010,9 @@ func (c *Cli) Usage(w io.Writer) {
 			}
 		}
 		if len(keys) > 0 {
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		fmt.Fprintf(w, "See %s -help TOPIC for topics - %s\n\n", c.appName, strings.Join(keys, ", "))
+			// Sort the keys alphabetically and display output
+			sort.Strings(keys)
+			fmt.Fprintf(w, "See %s -help TOPIC for topics - %s\n\n", c.appName, strings.Join(keys, ", "))
 		}
 	}
 
