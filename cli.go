@@ -1008,7 +1008,7 @@ func (c *Cli) Usage(w io.Writer) {
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
 		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.env[k].Usage)
+			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding - len(k)), c.env[k].Usage)
 		}
 		fmt.Fprintf(w, "\n\n")
 	}
