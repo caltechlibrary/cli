@@ -1019,9 +1019,9 @@ func (c *Cli) Usage(w io.Writer) {
 	fmt.Fprintf(w, "%s\n", c.version)
 }
 
-// UsageMd writes a Markdown page to io.Writer provided. Documentation is based on
+// GenerateMarkdownDocs writes a Markdown page to io.Writer provided. Documentation is based on
 // the application's metadata like app name, version, options, actions, etc.
-func (c *Cli) UsageMd(w io.Writer) {
+func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 	var parts []string
 	parts = append(parts, c.appName)
 	if len(c.options) > 0 {
@@ -1032,7 +1032,7 @@ func (c *Cli) UsageMd(w io.Writer) {
 	} else if len(c.params) > 0 {
 		parts = append(parts, c.params...)
 	}
-	fmt.Fprintf(w, "\n# USAGE\n\n## %s\n\n", strings.Join(parts, " "))
+	fmt.Fprintf(w, "\n# USAGE\n\n	%s\n\n", strings.Join(parts, " "))
 
 	if section, ok := c.Documentation["description"]; ok == true {
 		fmt.Fprintf(w, "## SYNOPSIS\n\n%s\n\n", section)
