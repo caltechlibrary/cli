@@ -868,6 +868,11 @@ func (c *Cli) AddParams(params ...string) {
 	}
 }
 
+// String prints an actions' verb and description
+func (a *Action) String() string {
+	return fmt.Sprintf("%s - %s", a.Name, a.Usage)
+}
+
 // AddAction associates a wrapping function with a action name, the wrapping function
 // has 4 parameters in io.Reader, out io.Writer, err io.Writer, args []string. It should return
 // an integer reflecting an exit code like you'd pass to os.Exit().
@@ -909,13 +914,14 @@ func (c *Cli) Run(args []string) int {
 		fmt.Fprintf(c.Eout, "Nothing to do\n")
 		return 1
 	}
-	verb := strings.TrimSpace(args[0])
+	verb, rest := PopArg(args)
+	verb = strings.TrimSpace(verb)
 	action, ok := c.actions[verb]
 	if ok == false {
-		fmt.Fprintf(c.Eout, "do not known how to %q\n", verb)
+		fmt.Fprintf(c.Eout, "do not known how to %q with %q\n", verb, rest)
 		return 1
 	}
-	return action.Fn(c.In, c.Out, c.Eout, args)
+	return action.Fn(c.In, c.Out, c.Eout, rest)
 }
 
 func padRight(s, p string, maxWidth int) string {
