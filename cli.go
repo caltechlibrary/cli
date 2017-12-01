@@ -34,7 +34,13 @@ import (
 	"time"
 )
 
-const Version = `v0.0.5`
+const Version = `v0.0.5-dev`
+
+//
+// the following are pre v0.0.5 structs anf funcs, they are here for
+// compatibility reasons until I convert the tools written for Caltech Library
+// are converted to the new v0.0.5-dev approach.
+//
 
 // Config holds the merged environment and options selected when the program runs
 // DEPRECIATED
@@ -271,6 +277,13 @@ func (cfg *Config) StandardOptions(showHelp, showExamples, showLicense, showVers
 	return ""
 }
 
+//
+// v0.0.5-dev brings a more wholistic approach to building a cli
+// (command line interface), not just configuring one.
+//
+// Below are the new structs anda funcs that will remain after v0.0.6-dev
+//
+
 // Open accepts a filename, fallbackFile (usually os.Stdout, os.Stdin, os.Stderr) and returns
 // a file pointer and error.  It is a conviences function for wrapping stdin, stdout, stderr
 // If filename is "-" or filename is "" then fallbackFile is used.
@@ -338,17 +351,13 @@ func PopArg(args []string) (string, []string) {
 	return s, args
 }
 
-//
-// v0.0.5 brings a more wholistic approach to building a cli, not just configuring one.
-// Below are the new structs and associated methods that will replace the original Config approach
-// at some point.
-//
-
 // Action describes an "action" that a cli might take. Actions aren't prefixed with a "-".
 type Action struct {
 	// Name is usually a verb like list, test, build as needed by the cli
 	Name string
 	// Fn is action that will be run by Cli.Run() if Name is the first non-option arg on the command line
+	//NOTE: currently the signature is io based but may be changed to *os.File in
+	// the future
 	Fn func(io.Reader, io.Writer, io.Writer, []string) int
 	// Usage is a short description of what the action does and description of any expected additoinal parameters
 	Usage string
@@ -1062,8 +1071,15 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 
 	if len(c.options) > 0 {
 		fmt.Fprintf(w, "## OPTIONS\n\n")
+		parts := []string{}
 		if len(c.env) > 0 {
-			fmt.Fprintf(w, "Options will override any corresponding environment settings\n\n")
+			parts = append(parts, "Options will override any corresponding environment settings.")
+		}
+		if len(c.actions) > 0 {
+			parts = append(parts, "Options are shared between all actions and must precede the action on the command line.")
+		}
+		if len(parts) > 0 {
+			fmt.Fprintf(w, "%s\n\n", strings.Join(parts, " "))
 		}
 		keys := []string{}
 		padding := 0
@@ -1118,7 +1134,11 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 		if len(keys) > 0 {
 			// Sort the keys alphabetically and display output
 			sort.Strings(keys)
-			fmt.Fprintf(w, "See %s -help TOPIC for topics - %s\n\n", c.appName, strings.Join(keys, ", "))
+			links := []string{}
+			for _, key := range keys {
+				links = append(links, fmt.Sprintf("[%s](%s.html)", key, key))
+			}
+			fmt.Fprintf(w, "Related: %s\n\n", strings.Join(links, ", "))
 		}
 	}
 
