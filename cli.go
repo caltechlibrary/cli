@@ -34,7 +34,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.5-dev`
+const Version = `v0.0.5-pre`
 
 //
 // the following are pre v0.0.5 structs anf funcs, they are here for
