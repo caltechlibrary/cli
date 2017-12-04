@@ -6,7 +6,7 @@
 function crawl_code() {
 	findfile -s ".go" . | while read FNAME; do
         grep "${1}" "${FNAME}" | cut -d \" -f 2 | while read PNAME; do
-		V=$(grep 'Version = ' "${GOPATH}/src/${PNAME}/$(basename "${PNAME}").go" | cut -d \` -f 2)
+		V=$(grep 'Version = `' "${GOPATH}/src/${PNAME}/$(basename "${PNAME}").go" | cut -d \` -f 2)
 		if [ "$V" != "" ]; then
 		    echo "$PNAME -- $V"
 		fi
