@@ -52,15 +52,6 @@ func check(t *testing.T, msg string, failNow bool) {
 	}
 }
 
-func TestNew(t *testing.T) {
-	licenseString := "%s %s released under a BSD License"
-	cfg := New(appName, strings.ToUpper(appName), "v0.0.0")
-	cfg.LicenseText = strings.Replace(licenseString, "%s", appName, -1)
-	check(t, isSameString(appName, cfg.appName), true)
-	check(t, isSameString(strings.ToUpper(appName), cfg.EnvPrefix), true)
-	check(t, isSameInt(0, len(cfg.Options)), true)
-}
-
 func TestOpen(t *testing.T) {
 	// Check of use of fallbackFile (os.Stdout) and cli.Open()
 	fp, err := Open("", os.Stdout)
@@ -132,58 +123,6 @@ func TestOpen(t *testing.T) {
 	}
 	fp.Close()
 	os.Remove("test.txt")
-}
-
-func TestMergeEnv(t *testing.T) {
-	cfg := New(appName, appName, "v0.0.0")
-
-	for _, term := range []string{"API_URL", "DBNAME", "BLEVE", "HTDOCS", "TEMPLATE_PATH", "SITE_URL"} {
-		if s := cfg.MergeEnv(term, "test_"+term); strings.Compare(s, "test_"+term) != 0 {
-			t.Error(fmt.Sprintf("%s_%s error %s", "EPGO", term, s))
-			t.FailNow()
-		}
-	}
-}
-
-func TestMergeBool(t *testing.T) {
-	cfg := New("testcli", "TESTCLI", "v0.0.0")
-	envVar := "TESTCLI_ONOFF"
-	onoff := true
-	expected := true
-	// NOTE: TESTCLI_ONOFF will not be set so will always return false
-	result := cfg.MergeEnvBool("onoff", onoff)
-	if expected != result {
-		t.Errorf("For onoff %t (env: %q), Expected %t, got %t", onoff, os.Getenv(envVar), expected, result)
-	}
-
-	onoff = false
-	expected = false
-	result = cfg.MergeEnvBool("onoff", onoff)
-	if expected != result {
-		t.Errorf("For onoff %t (env: %q), Expected %t, got %t", onoff, os.Getenv(envVar), expected, result)
-	}
-}
-
-func TestStandardOptions(t *testing.T) {
-	cfg := New("testcli", "TESTCLI", "v0.0.0")
-	args := []string{}
-	showHelp := false
-	showExamples := false
-	showLicense := false
-	showVersion := false
-	text := cfg.StandardOptions(showHelp, showExamples, showLicense, showVersion, args)
-	if text != "" {
-		t.Errorf("Expected empty string, --->\n%s\n", text)
-		t.FailNow()
-	}
-	showHelp = true
-	showExamples = false
-	args = append(args, "append")
-	text = cfg.StandardOptions(showHelp, showExamples, showLicense, showVersion, args)
-	if strings.HasPrefix(text, "No Information for append") {
-		t.Errorf("Expected 'No information for append', got %q", text)
-		t.FailNow()
-	}
 }
 
 func TestPopArg(t *testing.T) {
