@@ -55,6 +55,25 @@ type EnvAttribute struct {
 	Usage string
 }
 
+// EnvBool adds an environment variable which is evaluate before evaluating options
+// returns a pointer to the value.
+func (c *Cli) EnvBool(name string, value bool, usage string) *bool {
+	c.env[name] = &EnvAttribute{
+		Name:      name,
+		Type:      fmt.Sprintf("%T", value),
+		BoolValue: value,
+		Usage:     usage,
+	}
+	// FIXME: make sure i am creating a point to the boolean value in the map.
+	var p *bool
+	p = &c.env[name].BoolValue
+	_, ok := c.env[name]
+	if ok == false {
+		return nil
+	}
+	return p
+}
+
 // EnvBoolVar adds environment variable which is evaluate before evaluating options
 // It is the environment counterpart to flag.BoolVar()
 func (c *Cli) EnvBoolVar(p *bool, name string, value bool, usage string) error {
@@ -64,12 +83,30 @@ func (c *Cli) EnvBoolVar(p *bool, name string, value bool, usage string) error {
 		BoolValue: value,
 		Usage:     usage,
 	}
-	*p = c.env[name].BoolValue
+	p = &c.env[name].BoolValue
 	_, ok := c.env[name]
 	if ok == false {
 		return fmt.Errorf("%q could not be added to environment attributes", name)
 	}
 	return nil
+}
+
+// EnvInt adds environment variable which is evaluate before evaluating options
+// It is the environment counterpart to flag.IntVar()
+func (c *Cli) EnvInt(name string, value int, usage string) *int {
+	c.env[name] = &EnvAttribute{
+		Name:     name,
+		Type:     fmt.Sprintf("%T", value),
+		IntValue: value,
+		Usage:    usage,
+	}
+	var p *int
+	p = &c.env[name].IntValue
+	_, ok := c.env[name]
+	if ok == false {
+		return nil
+	}
+	return p
 }
 
 // EnvIntVar adds environment variable which is evaluate before evaluating options
@@ -81,12 +118,30 @@ func (c *Cli) EnvIntVar(p *int, name string, value int, usage string) error {
 		IntValue: value,
 		Usage:    usage,
 	}
-	*p = c.env[name].IntValue
+	p = &c.env[name].IntValue
 	_, ok := c.env[name]
 	if ok == false {
 		return fmt.Errorf("%q could not be added to environment attributes", name)
 	}
 	return nil
+}
+
+// EnvInt64 adds environment variable which is evaluate before evaluating options
+// It is the environment counterpart to flag.Int64Var()
+func (c *Cli) EnvInt64(name string, value int64, usage string) *int64 {
+	c.env[name] = &EnvAttribute{
+		Name:       name,
+		Type:       fmt.Sprintf("%T", value),
+		Int64Value: value,
+		Usage:      usage,
+	}
+	var p *int64
+	p = &c.env[name].Int64Value
+	_, ok := c.env[name]
+	if ok == false {
+		return nil
+	}
+	return p
 }
 
 // EnvInt64Var adds environment variable which is evaluate before evaluating options
@@ -98,12 +153,30 @@ func (c *Cli) EnvInt64Var(p *int64, name string, value int64, usage string) erro
 		Int64Value: value,
 		Usage:      usage,
 	}
-	*p = c.env[name].Int64Value
+	p = &c.env[name].Int64Value
 	_, ok := c.env[name]
 	if ok == false {
 		return fmt.Errorf("%q could not be added to environment attributes", name)
 	}
 	return nil
+}
+
+// EnvUint adds environment variable which is evaluate before evaluating options
+// It is the environment counterpart to flag.UintVar()
+func (c *Cli) EnvUint(name string, value uint, usage string) *uint {
+	c.env[name] = &EnvAttribute{
+		Name:      name,
+		Type:      fmt.Sprintf("%T", value),
+		UintValue: value,
+		Usage:     usage,
+	}
+	var p *uint
+	p = &c.env[name].UintValue
+	_, ok := c.env[name]
+	if ok == false {
+		return nil
+	}
+	return p
 }
 
 // EnvUintVar adds environment variable which is evaluate before evaluating options
@@ -115,12 +188,50 @@ func (c *Cli) EnvUintVar(p *uint, name string, value uint, usage string) error {
 		UintValue: value,
 		Usage:     usage,
 	}
-	*p = c.env[name].UintValue
+	p = &c.env[name].UintValue
 	_, ok := c.env[name]
 	if ok == false {
 		return fmt.Errorf("%q could not be added to environment attributes", name)
 	}
 	return nil
+}
+
+// EnvUint64 adds environment variable which is evaluate before evaluating options
+// It is the environment counterpart to flag.Uint64Var()
+func (c *Cli) EnvUint64(name string, value uint64, usage string) *uint64 {
+	c.env[name] = &EnvAttribute{
+		Name:        name,
+		Type:        fmt.Sprintf("%T", value),
+		Uint64Value: value,
+		Usage:       usage,
+	}
+	var p *uint64
+
+	p = &c.env[name].Uint64Value
+	_, ok := c.env[name]
+	if ok == false {
+		return nil
+	}
+	return p
+}
+
+// EnvFloat64 adds environment variable which is evaluate before evaluating options
+// It is the environment counterpart to flag.Float64Var()
+func (c *Cli) EnvFloat64(name string, value float64, usage string) *float64 {
+	c.env[name] = &EnvAttribute{
+		Name:         name,
+		Type:         fmt.Sprintf("%T", value),
+		Float64Value: value,
+		Usage:        usage,
+	}
+	var p *float64
+
+	p = &c.env[name].Float64Value
+	_, ok := c.env[name]
+	if ok == false {
+		return nil
+	}
+	return p
 }
 
 // EnvUint64Var adds environment variable which is evaluate before evaluating options
@@ -132,7 +243,7 @@ func (c *Cli) EnvUint64Var(p *uint64, name string, value uint64, usage string) e
 		Uint64Value: value,
 		Usage:       usage,
 	}
-	*p = c.env[name].Uint64Value
+	p = &c.env[name].Uint64Value
 	_, ok := c.env[name]
 	if ok == false {
 		return fmt.Errorf("%q could not be added to environment attributes", name)
@@ -140,21 +251,23 @@ func (c *Cli) EnvUint64Var(p *uint64, name string, value uint64, usage string) e
 	return nil
 }
 
-// EnvFloat64Var adds environment variable which is evaluate before evaluating options
-// It is the environment counterpart to flag.Float64Var()
-func (c *Cli) EnvFloat64Var(p *float64, name string, value float64, usage string) error {
+// EnvString adds environment variable which is evaluate before evaluating options
+// It is the environment counterpart to flag.StringVar()
+func (c *Cli) EnvString(name string, value string, usage string) *string {
 	c.env[name] = &EnvAttribute{
-		Name:         name,
-		Type:         fmt.Sprintf("%T", value),
-		Float64Value: value,
-		Usage:        usage,
+		Name:        name,
+		Type:        fmt.Sprintf("%T", value),
+		StringValue: value,
+		Usage:       usage,
 	}
-	*p = c.env[name].Float64Value
+	var p *string
+
+	p = &c.env[name].StringValue
 	_, ok := c.env[name]
 	if ok == false {
-		return fmt.Errorf("%q could not be added to environment attributes", name)
+		return nil
 	}
-	return nil
+	return p
 }
 
 // EnvStringVar adds environment variable which is evaluate before evaluating options
@@ -174,6 +287,25 @@ func (c *Cli) EnvStringVar(p *string, name string, value string, usage string) e
 	return nil
 }
 
+// EnvDuration adds environment variable which is evaluate before evaluating options
+// It is the environment counterpart to flag.DurationVar()
+func (c *Cli) EnvDuration(name string, value time.Duration, usage string) *time.Duration {
+	c.env[name] = &EnvAttribute{
+		Name:          name,
+		Type:          fmt.Sprintf("%T", value),
+		DurationValue: value,
+		Usage:         usage,
+	}
+	var p *time.Duration
+
+	p = &c.env[name].DurationValue
+	_, ok := c.env[name]
+	if ok == false {
+		return nil
+	}
+	return p
+}
+
 // EnvDurationVar adds environment variable which is evaluate before evaluating options
 // It is the environment counterpart to flag.DurationVar()
 func (c *Cli) EnvDurationVar(p *time.Duration, name string, value time.Duration, usage string) error {
@@ -183,7 +315,7 @@ func (c *Cli) EnvDurationVar(p *time.Duration, name string, value time.Duration,
 		DurationValue: value,
 		Usage:         usage,
 	}
-	*p = c.env[name].DurationValue
+	p = &c.env[name].DurationValue
 	_, ok := c.env[name]
 	if ok == false {
 		return fmt.Errorf("%q could not be added to environment attributes", name)
