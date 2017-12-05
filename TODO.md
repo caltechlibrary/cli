@@ -7,7 +7,9 @@
 
 ## Someday, Maybe
 
-+ [ ] a cli.GenerateCmd tgat would create a skelaton app based on options and exported items in package
++ [ ] Environment processing stil doesn't feel right
+    + Maybe have an EnvTYPE functions that adds the documentation and returns the value found or default, this would work like flag.StringVar() 
++ [ ] a cli.GenerateCmd would create a skeleton app based on options and exported items in package
 + [ ] Develop cli.App model that works for various tools
     + In, Out, Err for stdin, stdout, stderr as defined by app
          + In, Out, Err could be io.Reader, io.Writer, io.Writer interfaces
