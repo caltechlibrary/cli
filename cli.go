@@ -375,6 +375,11 @@ func (c *Cli) Args() []string {
 	return flag.Args()
 }
 
+// NArg returns flag.NArg()
+func (c *Cli) NArg() int {
+	return flag.NArg()
+}
+
 // Add Params documents any parameters not defined as Options or Actions, it is an orders list of strings
 func (c *Cli) AddParams(params ...string) {
 	for _, param := range params {
