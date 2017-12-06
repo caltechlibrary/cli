@@ -375,6 +375,11 @@ func (c *Cli) Args() []string {
 	return flag.Args()
 }
 
+// Arg returns an argument by pos index
+func (c *Cli) Arg(i int) string {
+	return flag.Arg(i)
+}
+
 // NArg returns flag.NArg()
 func (c *Cli) NArg() int {
 	return flag.NArg()
