@@ -9,6 +9,8 @@ Features include:
 
 + A common `Cli` object generated with `cli.NewCli()` representing configuration, environment and command line
     + environment and options share the same approach as Go's standard flag package
+    + options support multiple options (long/short version) in option's flag string separating options by comma
+    + generate help and usage, sysnopsis, options, examples, license based on programaticly
 + A common `Create`, `Open` and `Close` file wrapper for integrating standard in/out/err as fallback
 + The `Cli` object supports the following functions
     + `AppName()` returns the compiled application name
