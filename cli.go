@@ -32,10 +32,10 @@ import (
 	"time"
 )
 
-const Version = `v0.0.5-pre`
+const Version = `v0.0.5`
 
 //
-// v0.0.5-dev brings a more wholistic approach to building a cli
+// v0.0.5 brings a more wholistic approach to building a cli
 // (command line interface), not just configuring one.
 //
 // Below are the new structs anda funcs that will remain after v0.0.6-dev
