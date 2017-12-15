@@ -376,29 +376,30 @@ func (c *Cli) ParseEnv() error {
 	)
 	for k, e := range c.env {
 		s := strings.TrimSpace(os.Getenv(k))
-		switch e.Type {
-		case "bool":
-			if s != "" {
+		// NOTE: we only parse the environment if it is not an emprt string
+		if s != "" {
+			switch e.Type {
+			case "bool":
 				e.BoolValue, err = strconv.ParseBool(s)
+			case "int":
+				e.IntValue, err = strconv.Atoi(s)
+			case "int64":
+				e.Int64Value, err = strconv.ParseInt(s, 10, 64)
+			case "uint":
+				u64, err = strconv.ParseUint(s, 10, 32)
+				e.UintValue = uint(u64)
+			case "uint64":
+				e.Uint64Value, err = strconv.ParseUint(s, 10, 64)
+			case "float64":
+				e.Float64Value, err = strconv.ParseFloat(s, 64)
+			case "time.Duration":
+				e.DurationValue, err = time.ParseDuration(s)
+			default:
+				e.StringValue = s
 			}
-		case "int":
-			e.IntValue, err = strconv.Atoi(s)
-		case "int64":
-			e.Int64Value, err = strconv.ParseInt(s, 10, 64)
-		case "uint":
-			u64, err = strconv.ParseUint(s, 10, 32)
-			e.UintValue = uint(u64)
-		case "uint64":
-			e.Uint64Value, err = strconv.ParseUint(s, 10, 64)
-		case "float64":
-			e.Float64Value, err = strconv.ParseFloat(s, 64)
-		case "time.Duration":
-			e.DurationValue, err = time.ParseDuration(s)
-		default:
-			e.StringValue = s
-		}
-		if err != nil {
-			return fmt.Errorf("%q should be type %q, %s", e.Name, e.Type, err)
+			if err != nil {
+				return fmt.Errorf("%q should be type %q, %s", e.Name, e.Type, err)
+			}
 		}
 		c.env[k] = e
 	}
