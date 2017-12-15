@@ -378,7 +378,9 @@ func (c *Cli) ParseEnv() error {
 		s := strings.TrimSpace(os.Getenv(k))
 		switch e.Type {
 		case "bool":
-			e.BoolValue, err = strconv.ParseBool(s)
+			if s != "" {
+				e.BoolValue, err = strconv.ParseBool(s)
+			}
 		case "int":
 			e.IntValue, err = strconv.Atoi(s)
 		case "int64":

@@ -32,7 +32,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.5`
+const Version = `v0.0.6`
 
 //
 // v0.0.5 brings a more wholistic approach to building a cli
