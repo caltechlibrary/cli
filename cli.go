@@ -173,6 +173,18 @@ func (c *Cli) AppName() string {
 	return c.appName
 }
 
+// Verb returns the verb in an arg list without poping the verb.
+// If arg list is empty then an empty string is returned.
+func (c *Cli) Verb(args []string) string {
+	for _, verb := range args {
+		if _, ok = c.actions[verb]; ok == true {
+			return verb
+		}
+	}
+
+	return ""
+}
+
 // AddHelp takes a string keyword and byte slice of content and
 // updates the Documentation attribute
 func (c *Cli) AddHelp(keyword string, usage []byte) error {
