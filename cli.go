@@ -176,6 +176,7 @@ func (c *Cli) AppName() string {
 // Verb returns the verb in an arg list without poping the verb.
 // If arg list is empty then an empty string is returned.
 func (c *Cli) Verb(args []string) string {
+	var ok bool
 	for _, verb := range args {
 		if _, ok = c.actions[verb]; ok == true {
 			return verb
