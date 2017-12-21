@@ -125,7 +125,7 @@ func TestOpen(t *testing.T) {
 	os.Remove("test.txt")
 }
 
-func TestPopArg(t *testing.T) {
+func TestShiftArg(t *testing.T) {
 	args := []string{
 		"one",
 		"two",
@@ -133,7 +133,7 @@ func TestPopArg(t *testing.T) {
 	}
 	expected := args[0]
 	expectedL := len(args) - 1
-	r, args := PopArg(args)
+	r, args := ShiftArg(args)
 	if r != expected {
 		t.Errorf("expected %q, got %q", expected, r)
 	}
@@ -142,7 +142,7 @@ func TestPopArg(t *testing.T) {
 	}
 	expected = args[0]
 	expectedL = len(args) - 1
-	r, args = PopArg(args)
+	r, args = ShiftArg(args)
 	if r != expected {
 		t.Errorf("expected %q, got %q", expected, r)
 	}
@@ -151,7 +151,7 @@ func TestPopArg(t *testing.T) {
 	}
 	expected = args[0]
 	expectedL = len(args) - 1
-	r, args = PopArg(args)
+	r, args = ShiftArg(args)
 	if r != expected {
 		t.Errorf("expected %q, got %q", expected, r)
 	}

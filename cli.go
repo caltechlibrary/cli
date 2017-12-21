@@ -97,8 +97,6 @@ func IsPipe(in *os.File) bool {
 // If array is empty it returns an empty string, when there are no more args it returns nil for the
 // arg parameter
 func ShiftArg(args []string) (string, []string) {
-	var s string
-
 	if args != nil && len(args) >= 1 {
 		if len(args) > 1 {
 			return args[0], args[1:]
@@ -133,10 +131,11 @@ func PopArg(args []string) (string, []string) {
 
 // PushArg takes and array and adds a string to the end
 func PushArg(s string, args []string) []string {
-	if args == nil {
-		args = []string{}
+	if args != nil {
+		args = append(args, s)
+		return args
 	}
-	return append(s, args)
+	return []string{s}
 }
 
 // Action describes an "action" that a cli might take. Actions aren't prefixed with a "-".
