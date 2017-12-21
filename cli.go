@@ -91,21 +91,52 @@ func IsPipe(in *os.File) bool {
 	return false
 }
 
-// PopArg takes an array of strings and if array is not empty returns a string and the rest of the args.
+//FIXME: PopArg was renamed ShiftArg since it is coming off the zero position in array
+
+// ShiftArg takes an array of strings and if array is not empty returns a string and the rest of the args.
 // If array is empty it returns an empty string, when there are no more args it returns nil for the
 // arg parameter
-func PopArg(args []string) (string, []string) {
+func ShiftArg(args []string) (string, []string) {
 	var s string
 
 	if args != nil && len(args) >= 1 {
-		s = args[0]
 		if len(args) > 1 {
-			args = args[1:]
-		} else {
-			args = nil
+			return args[0], args[1:]
 		}
+		return args[0], nil
 	}
-	return s, args
+	return "", nil
+}
+
+// Unshift takes a string and an array of strings and returns a new array with
+// the value of string as the first element and the rest are elements of the array of strings
+func UnshiftArg(s string, args []string) []string {
+	nArgs := []string{s}
+	if args != nil {
+		nArgs = append(nArgs, args...)
+	}
+	return nArgs
+}
+
+// PopArg takes an array pops the last element returning the element and an updated
+// array. If no elements are left then a empty string and nil are turned.
+func PopArg(args []string) (string, []string) {
+	if args == nil {
+		return "", nil
+	}
+	if len(args) == 1 {
+		return args[0], nil
+	}
+	last := len(args) - 1
+	return args[last], args[0:last]
+}
+
+// PushArg takes and array and adds a string to the end
+func PushArg(s string, args []string) []string {
+	if args == nil {
+		args = []string{}
+	}
+	return append(s, args)
 }
 
 // Action describes an "action" that a cli might take. Actions aren't prefixed with a "-".
