@@ -453,6 +453,9 @@ func (c *Cli) AddAction(verb string, fn func(io.Reader, io.Writer, io.Writer, []
 	if ok == false {
 		return fmt.Errorf("Failed to add action %q", verb)
 	}
+	if _, ok := c.Documentation[verb]; ok == false {
+		c.Documentation[verb] = []byte(usage)
+	}
 	return nil
 }
 
@@ -576,9 +579,6 @@ func (c *Cli) Usage(w io.Writer) {
 		for _, k := range keys {
 			usage := c.Action(k)
 			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
-			if _, ok := c.Documentation[k]; ok == false {
-				c.Documentation[k] = []byte(usage)
-			}
 		}
 		fmt.Fprintf(w, "\n\n")
 	}
