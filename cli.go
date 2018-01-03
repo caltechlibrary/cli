@@ -32,7 +32,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.7-dev`
+const Version = `v0.0.8-dev`
 
 //
 // v0.0.5 brings a more wholistic approach to building a cli
@@ -576,6 +576,9 @@ func (c *Cli) Usage(w io.Writer) {
 		for _, k := range keys {
 			usage := c.Action(k)
 			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
+			if _, ok := c.Documentation[k]; ok == false {
+				c.Documentation[k] = []byte(usage)
+			}
 		}
 		fmt.Fprintf(w, "\n\n")
 	}

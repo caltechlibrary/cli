@@ -5,6 +5,9 @@
 
 ## Next
 
++ [ ] See ...
+
+
 ## Someday, Maybe
 
 + [ ] a cli.GenerateCmd would create a skeleton app based on options and exported items in package
