@@ -91,7 +91,7 @@ func IsPipe(in *os.File) bool {
 	return false
 }
 
-//FIXME: PopArg was renamed ShiftArg since it is coming off the zero position in array
+//NOTE: PopArg was renamed ShiftArg since it is coming off the zero position in array
 
 // ShiftArg takes an array of strings and if array is not empty returns a string and the rest of the args.
 // If array is empty it returns an empty string, when there are no more args it returns nil for the
@@ -484,7 +484,7 @@ func (c *Cli) Run(args []string) int {
 		fmt.Fprintf(c.Eout, "Nothing to do\n")
 		return 1
 	}
-	verb, rest := PopArg(args)
+	verb, rest := ShiftArg(args)
 	verb = strings.TrimSpace(verb)
 	action, ok := c.actions[verb]
 	if ok == false {
