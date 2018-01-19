@@ -32,9 +32,10 @@ var (
 how to use the cli package.
 `
 
-	examples = `Example generating a new "cmd/foo/foo.go"
+	examples = `Example generating a new "helloworld"
 
-    cligenerator -app=cmd/foo/foo.go -name="foo" -decription="This is a demo cli" -use-license=LICENSE
+    cligenerator -app=helloworld -name="@author Jane Doe, <jane.doe@example.edu>" \
+                 -decription="This is a demo cli" -use-license=LICENSE
 `
 
 	// Standard Options
@@ -77,7 +78,7 @@ func main() {
 
 	// Application Options
 	app.StringVar(&appName, "app", "[YOUR APP NAME GOES HERE]", "set the name of your generated app, e.g. helloworld")
-	app.StringVar(&appAuthor, "author", "[YOUR AUTHOR STRING GOES HERE]", "set the author name, e.g. '@author Jane Doe, <jane.doe@library.example.edu'")
+	app.StringVar(&appAuthor, "name,author", "[YOUR AUTHOR STRING GOES HERE]", "set the author name, e.g. '@author Jane Doe, <jane.doe@example.edu>'")
 	app.StringVar(&appDescription, "description", "[SHORT APP DESCRIPTION GOES HERE]", "set a short application description, e.g. says 'Hello World!'")
 	app.StringVar(&licenseFilename, "use-license", "LICENSE", "set the license file name to read in, defaults to LICENSE")
 

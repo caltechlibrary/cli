@@ -18,7 +18,7 @@ build:
 	go build -o bin/cligenerate$(EXT) cmd/cligenerate/cligenerate.go
 
 install:
-	go install cmd/cligenerate/cligenerate.go
+	env GOBIN=$(HOME)/bin go install cmd/cligenerate/cligenerate.go
 
 clean:
 	if [ -d dist ]; then rm -fR dist; fi
