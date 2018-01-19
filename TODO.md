@@ -5,13 +5,10 @@
 
 ## Next
 
-+ [ ] See ...
-
-
 ## Someday, Maybe
 
-+ [ ] a cli.GenerateCmd would create a skeleton main.go based on options and exported items in package
 + [ ] Need to word wrap output of cli help, usage, etc. based on console width and height
++ [ ] See ...
 
 ## Completed
 
@@ -38,3 +35,4 @@
     + could change parameters for .New() to include explicit usage page sections
     + could provide a simple apply appName function  that would replace '%s' with appName
 + [x] add multi-option definition support and remove dependency on native flag package
++ [x] a cli.Generate would create a skeleton main.go based on options and exported items in package
