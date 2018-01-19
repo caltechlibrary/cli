@@ -10,7 +10,7 @@
 
 ## Someday, Maybe
 
-+ [ ] a cli.GenerateCmd would create a skeleton app based on options and exported items in package
++ [ ] a cli.GenerateCmd would create a skeleton main.go based on options and exported items in package
 + [ ] Need to word wrap output of cli help, usage, etc. based on console width and height
 
 ## Completed
