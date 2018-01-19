@@ -34,7 +34,7 @@ how to use the cli package.
 
 	examples = `Example generating a new "helloworld"
 
-    cligenerator -app=helloworld -name="@author Jane Doe, <jane.doe@example.edu>" \
+    cligenerate -app=helloworld -name="@author Jane Doe, <jane.doe@example.edu>" \
                  -decription="This is a demo cli" -use-license=LICENSE
 `
 
