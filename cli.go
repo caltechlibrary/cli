@@ -640,7 +640,7 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 		sort.Strings(keys)
 		fmt.Fprintf(w, "```\n")
 		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.env[k].Usage)
+			fmt.Fprintf(w, "    %s  # %s\n", padRight(k, " ", padding), c.env[k].Usage)
 		}
 		fmt.Fprintf(w, "```\n\n")
 	}
