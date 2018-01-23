@@ -642,7 +642,7 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 		for _, k := range keys {
 			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.env[k].Usage)
 		}
-		fmt.Fprintf(w, "\n\n")
+		fmt.Fprintf(w, "```\n\n")
 	}
 
 	if len(c.options) > 0 {
