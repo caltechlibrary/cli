@@ -32,7 +32,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.9`
+const Version = `v0.0.10`
 
 //
 // v0.0.5 brings a more wholistic approach to building a cli
@@ -438,6 +438,23 @@ func (c *Cli) AddParams(params ...string) {
 // String prints an actions' verb and description
 func (a *Action) String() string {
 	return fmt.Sprintf("%s - %s", a.Name, a.Usage)
+}
+
+// AddVerb associates documentation with a verb without assigning a function (e.g. if you aren't going to use cli.Run()
+// so we don't need an "Action" only the docs
+func (c *Cli) AddVerb(verb string, usage string) error {
+	c.actions[verb] = &Action{
+		Name:  verb,
+		Usage: usage,
+	}
+	_, ok := c.actions[verb]
+	if ok == false {
+		return fmt.Errorf("Failed to add verb docs for %q", verb)
+	}
+	if _, ok := c.Documentation[verb]; ok == false {
+		c.Documentation[verb] = []byte(usage)
+	}
+	return nil
 }
 
 // AddAction associates a wrapping function with a action name, the wrapping function
