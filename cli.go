@@ -32,7 +32,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.10`
+const Version = `v0.0.11`
 
 //
 // v0.0.5 brings a more wholistic approach to building a cli
@@ -160,6 +160,9 @@ type Cli struct {
 	Eout *os.File
 	// Documentation specific help pages, e.g. -help example1
 	Documentation map[string][]byte
+
+	// ActionsRequired is true then the USAGE line shows ACTION rather than [ACTION]
+	ActionsRequired bool
 
 	// application name based on os.Args[0]
 	appName string
@@ -528,8 +531,16 @@ func (c *Cli) Usage(w io.Writer) {
 	if len(c.options) > 0 {
 		parts = append(parts, "[OPTIONS]")
 	}
+	// Add parts defined by AddParams()
+	if len(c.params) > 0 {
+		parts = append(parts, strings.Join(c.params, " "))
+	}
 	if len(c.actions) > 0 {
-		parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
+		if c.ActionsRequired {
+			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
+		} else {
+			parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
+		}
 	} else if len(c.params) > 0 {
 		parts = append(parts, c.params...)
 	}
