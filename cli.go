@@ -532,10 +532,10 @@ func (c *Cli) Usage(w io.Writer) {
 		parts = append(parts, "[OPTIONS]")
 	}
 	// Add parts defined by AddParams()
-	if len(c.params) > 0 {
-		parts = append(parts, strings.Join(c.params, " "))
-	}
 	if len(c.actions) > 0 {
+		if len(c.params) > 0 {
+			parts = append(parts, c.params...)
+		}
 		if c.ActionsRequired {
 			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
 		} else {
@@ -640,8 +640,16 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 	if len(c.options) > 0 {
 		parts = append(parts, "[OPTIONS]")
 	}
+
 	if len(c.actions) > 0 {
-		parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
+		if len(c.params) > 0 {
+			parts = append(parts, c.params...)
+		}
+		if c.ActionsRequired {
+			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
+		} else {
+			parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
+		}
 	} else if len(c.params) > 0 {
 		parts = append(parts, c.params...)
 	}
