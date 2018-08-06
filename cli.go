@@ -804,7 +804,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
 		for _, k := range keys {
-			fmt.Fprintf(w, ".TP\n\\fB%s\\fP \\- %s\n", k, c.env[k].Usage)
+			fmt.Fprintf(w, ".TP\n\\fB%s\\fP\n%s\n", k, c.env[k].Usage)
 		}
 	}
 
@@ -827,7 +827,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
 		for _, k := range keys {
-			fmt.Fprintf(w, ".TP\n\\fB%s\\fP \\- %s\n", k, c.options[k])
+			fmt.Fprintf(w, ".TP\n\\fB%s\\fP\n%s\n", k, c.options[k])
 		}
 	}
 
@@ -841,7 +841,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		sort.Strings(keys)
 		for _, k := range keys {
 			usage := c.Action(k)
-			fmt.Fprintf(w, ".TP\n\\fB%s\\fP \\- %s\n", k, usage)
+			fmt.Fprintf(w, ".TP\n\\fB%s\\fP\n%s\n", k, usage)
 		}
 	}
 
