@@ -836,11 +836,9 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		}
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
-		fmt.Fprintf(w, ".EX\n")
 		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.options[k])
+			fmt.Fprintf(w, "\\fB%s\\fP \\- %s\n", k, c.options[k])
 		}
-		fmt.Fprintf(w, ".EP\n")
 	}
 
 	if len(c.actions) > 0 {
@@ -855,12 +853,10 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		}
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
-		fmt.Fprintf(w, ".EX\n")
 		for _, k := range keys {
 			usage := c.Action(k)
-			fmt.Fprintf(w, "%s  %s\n", padRight(k, " ", padding), usage)
+			fmt.Fprintf(w, "\\fB%s\\fP \\-  %s\n", k, usage)
 		}
-		fmt.Fprintf(w, ".EP\n")
 	}
 
 	// .SH EXAMPLES
