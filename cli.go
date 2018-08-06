@@ -793,7 +793,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	}
 
 	if len(c.env) > 0 {
-		fmt.Fprintf(w, ".SH ENVIRONMENT\n")
+		fmt.Fprintf(w, ".SS ENVIRONMENT\n")
 		if len(c.options) > 0 {
 			fmt.Fprintf(w, "Environment variables can be overridden by corresponding options\n")
 		}
@@ -809,7 +809,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		sort.Strings(keys)
 		fmt.Fprintf(w, ".EX\n")
 		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  # %s\n", padRight(k, " ", padding), c.env[k].Usage)
+			fmt.Fprintf(w, "%s  # %s\n", padRight(k, " ", padding), c.env[k].Usage)
 		}
 		fmt.Fprintf(w, ".EP\n")
 	}
@@ -844,7 +844,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	}
 
 	if len(c.actions) > 0 {
-		fmt.Fprintf(w, ".SH ACTIONS\n")
+		fmt.Fprintf(w, ".SS ACTIONS\n")
 		keys := []string{}
 		padding := 0
 		for k, _ := range c.actions {
@@ -858,34 +858,45 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		fmt.Fprintf(w, ".EX\n")
 		for _, k := range keys {
 			usage := c.Action(k)
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
+			fmt.Fprintf(w, "%s  %s\n", padRight(k, " ", padding), usage)
 		}
 		fmt.Fprintf(w, ".EP\n")
 	}
 
+	// .SH EXAMPLES
 	if section, ok := c.Documentation["examples"]; ok == true {
+		//FIXME: Need to convert Markdown of examples into nroff with
+		// with man macros.
 		fmt.Fprintf(w, ".SH EXAMPLES\n%s\n", section)
 	}
 
-	// .SH EXAMPLES
-	if len(c.Documentation) > 0 {
-		keys := []string{}
-		for k, _ := range c.actions {
-			if k != "description" && k != "examples" && k != "index" {
-				keys = append(keys, k)
+	/*
+		// .SH SEE ALSO
+		fmt.Fprintf(w, ".SH SEE ALSO\n")
+			if len(c.Documentation) > 0 {
+				keys := []string{}
+				for k, _ := range c.actions {
+					if k != "description" && k != "examples" && k != "index" {
+						keys = append(keys, k)
+					}
+				}
+				if len(keys) > 0 {
+					// Sort the keys alphabetically and display output
+					sort.Strings(keys)
+					links := []string{}
+					for _, key := range keys {
+						links = append(links, "%s", key)
+					}
+					fmt.Fprintf(w, ".SH SEE ALSO\n%s\n", strings.Join(links, ", "))
+				}
 			}
-		}
-		if len(keys) > 0 {
-			// Sort the keys alphabetically and display output
-			sort.Strings(keys)
-			links := []string{}
-			for _, key := range keys {
-				links = append(links, fmt.Sprintf("[%s](%s.html)", key, key))
-			}
-			fmt.Fprintf(w, ".SH SEE ALSO\n%s\n\n", strings.Join(links, ", "))
-		}
-	}
-	// .BUGS
+		// .BUGS
+		fmt.Fprintf(w, ".SH BUGS\n")
+		// AUTHORS
+		fmt.Fprintf(w, ".SH AUTHORS\n")
+		// COPYRIGHT
+		fmt.Fprintf(w, ".SH COPYRIGHT\n")
+	*/
 }
 
 func (c *Cli) License() string {
