@@ -32,7 +32,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.11`
+const Version = `v0.0.12`
 
 //
 // v0.0.5 brings a more wholistic approach to building a cli
@@ -755,6 +755,137 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 	}
 
 	fmt.Fprintf(w, "%s\n", c.version)
+}
+
+// GenerateManPage writes a manual page suitable for running through
+// `nroff --man`. May need some human clean up depending on content and
+// internal formatting (e.g markdown style, spacing, etc.)
+func (c *Cli) GenerateManPage(w io.Writer) {
+	var parts []string
+
+	// .TH {appName} {section_no} {version} {date}
+	fmt.Fprintf(w, ".TH %s %d %q %q\n", c.appName, 1, time.Now().Format("2006 Jan 02"), strings.Replace(c.Version(), c.appName+" ", "", 1))
+
+	parts = append(parts, fmt.Sprintf("\\fB%s\\fP", c.appName))
+	if len(c.options) > 0 {
+		parts = append(parts, "[OPTIONS]")
+	}
+
+	if len(c.actions) > 0 {
+		if len(c.params) > 0 {
+			parts = append(parts, c.params...)
+		}
+		if c.ActionsRequired {
+			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
+		} else {
+			parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
+		}
+	} else if len(c.params) > 0 {
+		parts = append(parts, c.params...)
+	}
+	// .SH USAGE
+	fmt.Fprintf(w, ".SH USAGE\n%s\n", strings.Join(parts, " "))
+
+	// .SH SYNOPSIS
+	// .SH DESCRIPTION
+	if section, ok := c.Documentation["description"]; ok == true {
+		fmt.Fprintf(w, ".SH SYNOPSIS\n%s\n", section)
+	}
+
+	if len(c.env) > 0 {
+		fmt.Fprintf(w, ".SH ENVIRONMENT\n")
+		if len(c.options) > 0 {
+			fmt.Fprintf(w, "Environment variables can be overridden by corresponding options\n")
+		}
+		keys := []string{}
+		padding := 0
+		for k, _ := range c.env {
+			keys = append(keys, k)
+			if len(k) > padding {
+				padding = len(k) + 1
+			}
+		}
+		// Sort the keys alphabetically and display output
+		sort.Strings(keys)
+		fmt.Fprintf(w, ".EX\n")
+		for _, k := range keys {
+			fmt.Fprintf(w, "    %s  # %s\n", padRight(k, " ", padding), c.env[k].Usage)
+		}
+		fmt.Fprintf(w, ".EP\n")
+	}
+
+	if len(c.options) > 0 {
+		fmt.Fprintf(w, ".SH OPTIONS\n")
+		parts := []string{}
+		if len(c.env) > 0 {
+			parts = append(parts, "Options will override any corresponding environment settings.")
+		}
+		if len(c.actions) > 0 {
+			parts = append(parts, "Options are shared between all actions and must precede the action on the command line.")
+		}
+		if len(parts) > 0 {
+			fmt.Fprintf(w, "%s\n", strings.Join(parts, " "))
+		}
+		keys := []string{}
+		padding := 0
+		for k, _ := range c.options {
+			keys = append(keys, k)
+			if len(k) > padding {
+				padding = len(k) + 1
+			}
+		}
+		// Sort the keys alphabetically and display output
+		sort.Strings(keys)
+		fmt.Fprintf(w, ".EX\n")
+		for _, k := range keys {
+			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.options[k])
+		}
+		fmt.Fprintf(w, ".EP\n")
+	}
+
+	if len(c.actions) > 0 {
+		fmt.Fprintf(w, ".SH ACTIONS\n")
+		keys := []string{}
+		padding := 0
+		for k, _ := range c.actions {
+			keys = append(keys, k)
+			if len(k) > padding {
+				padding = len(k) + 1
+			}
+		}
+		// Sort the keys alphabetically and display output
+		sort.Strings(keys)
+		fmt.Fprintf(w, ".EX\n")
+		for _, k := range keys {
+			usage := c.Action(k)
+			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
+		}
+		fmt.Fprintf(w, ".EP\n")
+	}
+
+	if section, ok := c.Documentation["examples"]; ok == true {
+		fmt.Fprintf(w, ".SH EXAMPLES\n%s\n", section)
+	}
+
+	// .SH EXAMPLES
+	if len(c.Documentation) > 0 {
+		keys := []string{}
+		for k, _ := range c.actions {
+			if k != "description" && k != "examples" && k != "index" {
+				keys = append(keys, k)
+			}
+		}
+		if len(keys) > 0 {
+			// Sort the keys alphabetically and display output
+			sort.Strings(keys)
+			links := []string{}
+			for _, key := range keys {
+				links = append(links, fmt.Sprintf("[%s](%s.html)", key, key))
+			}
+			fmt.Fprintf(w, ".SH SEE ALSO\n%s\n\n", strings.Join(links, ", "))
+		}
+	}
+	// .BUGS
 }
 
 func (c *Cli) License() string {

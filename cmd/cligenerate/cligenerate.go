@@ -28,7 +28,7 @@ import (
 )
 
 var (
-	description = `this is a cli application generator. It also demonstrates
+	description = `This is a cli application generator. It also demonstrates
 how to use the cli package.
 `
 
@@ -49,6 +49,7 @@ how to use the cli package.
 	quiet                bool
 	prettyPrint          bool
 	generateMarkdownDocs bool
+	generateManPage      bool
 
 	// Application Options
 	appName         string
@@ -75,6 +76,7 @@ func main() {
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 	app.BoolVar(&prettyPrint, "p,pretty", false, "pretty print output")
 	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateManPage, "generate-manpage", false, "output man page")
 
 	// Application Options
 	app.StringVar(&appName, "app", "[YOUR APP NAME GOES HERE]", "set the name of your generated app, e.g. helloworld")
@@ -101,6 +103,10 @@ func main() {
 	// Handle options
 	if generateMarkdownDocs {
 		app.GenerateMarkdownDocs(app.Out)
+		os.Exit(0)
+	}
+	if generateManPage {
+		app.GenerateManPage(app.Out)
 		os.Exit(0)
 	}
 	if showHelp || showExamples {
