@@ -764,9 +764,9 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	var parts []string
 
 	// .TH {appName} {section_no} {version} {date}
-	fmt.Fprintf(w, ".TH %s %d %q %q\n", c.appName, 1, time.Now().Format("2006 Jan 02"), strings.Replace(c.Version(), c.appName+" ", "", 1))
+	fmt.Fprintf(w, ".TH %s %d %q %q\n", c.appName, 1, time.Now().Format("2006 Jan 02"), strings.TrimSpace(strings.Replace(c.Version(), c.appName+" ", "", 1)))
 
-	parts = append(parts, fmt.Sprintf("\\fB%s\\fP", c.appName))
+	parts = append(parts, fmt.Sprintf(".TP\n\\fB%s\\fP", c.appName))
 	if len(c.options) > 0 {
 		parts = append(parts, "[OPTIONS]")
 	}
@@ -793,69 +793,55 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	}
 
 	if len(c.env) > 0 {
-		fmt.Fprintf(w, ".SS ENVIRONMENT\n")
+		fmt.Fprintf(w, ".SH ENVIRONMENT\n")
 		if len(c.options) > 0 {
 			fmt.Fprintf(w, "Environment variables can be overridden by corresponding options\n")
 		}
 		keys := []string{}
-		padding := 0
 		for k, _ := range c.env {
 			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
 		}
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
-		fmt.Fprintf(w, ".EX\n")
 		for _, k := range keys {
-			fmt.Fprintf(w, "%s  # %s\n", padRight(k, " ", padding), c.env[k].Usage)
+			fmt.Fprintf(w, ".TP\n\\fB%s\\fP \\- %s\n", k, c.env[k].Usage)
 		}
-		fmt.Fprintf(w, ".EP\n")
 	}
 
 	if len(c.options) > 0 {
 		fmt.Fprintf(w, ".SH OPTIONS\n")
 		parts := []string{}
 		if len(c.env) > 0 {
-			parts = append(parts, "Options will override any corresponding environment settings.")
+			parts = append(parts, ".TP\nOptions will override any corresponding environment settings.\n")
 		}
 		if len(c.actions) > 0 {
-			parts = append(parts, "Options are shared between all actions and must precede the action on the command line.")
+			parts = append(parts, ".TP\nOptions are shared between all actions and must precede the action on the command line.\n")
 		}
 		if len(parts) > 0 {
-			fmt.Fprintf(w, "%s\n", strings.Join(parts, " "))
+			fmt.Fprintf(w, "%s", strings.Join(parts, ""))
 		}
 		keys := []string{}
-		padding := 0
 		for k, _ := range c.options {
 			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
 		}
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
 		for _, k := range keys {
-			fmt.Fprintf(w, "\\fB%s\\fP \\- %s\n", k, c.options[k])
+			fmt.Fprintf(w, ".TP\n\\fB%s\\fP \\- %s\n", k, c.options[k])
 		}
 	}
 
 	if len(c.actions) > 0 {
-		fmt.Fprintf(w, ".SS ACTIONS\n")
+		fmt.Fprintf(w, ".SH ACTIONS\n")
 		keys := []string{}
-		padding := 0
 		for k, _ := range c.actions {
 			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
 		}
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
 		for _, k := range keys {
 			usage := c.Action(k)
-			fmt.Fprintf(w, "\\fB%s\\fP \\-  %s\n", k, usage)
+			fmt.Fprintf(w, ".TP\n\\fB%s\\fP \\- %s\n", k, usage)
 		}
 	}
 
@@ -863,7 +849,8 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	if section, ok := c.Documentation["examples"]; ok == true {
 		//FIXME: Need to convert Markdown of examples into nroff with
 		// with man macros.
-		fmt.Fprintf(w, ".SH EXAMPLES\n%s\n", section)
+		fmt.Fprintf(w, ".SH EXAMPLES\n")
+		fmt.Fprintf(w, ".TP\n%s\n", md2man(section))
 	}
 
 	/*
