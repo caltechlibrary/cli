@@ -5,6 +5,8 @@
 
 ## Next
 
++ [ ] Improve markdown to manpage conversion
+
 ## Someday, Maybe
 
 + [ ] Need to word wrap output of cli help, usage, etc. based on console width and height
