@@ -53,7 +53,7 @@ var (
 	newLine bool
 	quiet bool
 	prettyPrint bool
-	generateMarkdownDocs bool
+	generateMarkdown bool
 	generateManPage bool
 
 	// Application Options
@@ -86,7 +86,7 @@ func main() {
 	app.BoolVar(&newLine, "nl,newline", false, "if true add a trailing newline")
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 	app.BoolVar(&prettyPrint, "p,pretty", false, "pretty print output")
-	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateMarkdown, "generate-markdown", false, "generate Markdown documentation")
 	app.BoolVar(&generateManPage, "generate-manpage", false, "output manpage markup")
 
 	// Application Options
@@ -112,8 +112,8 @@ func main() {
 	defer cli.CloseFile(outputFName, app.Out)
 
 	// Handle options
-	if generateMarkdownDocs {
-		app.GenerateMarkdownDocs(app.Out)
+	if generateMarkdown {
+		app.GenerateMarkdown(app.Out)
 		os.Exit(0)
 	}
 	if generateManPage {

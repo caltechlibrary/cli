@@ -51,17 +51,17 @@ how to use the cli package.
 	bugs = `_cligenerator_ is only a proof of concept implementation`
 
 	// Standard Options
-	showHelp             bool
-	showLicense          bool
-	showVersion          bool
-	showExamples         bool
-	inputFName           string
-	outputFName          string
-	newLine              bool
-	quiet                bool
-	prettyPrint          bool
-	generateMarkdownDocs bool
-	generateManPage      bool
+	showHelp         bool
+	showLicense      bool
+	showVersion      bool
+	showExamples     bool
+	inputFName       string
+	outputFName      string
+	newLine          bool
+	quiet            bool
+	prettyPrint      bool
+	generateMarkdown bool
+	generateManPage  bool
 
 	// Application Options
 	appName             string
@@ -92,8 +92,8 @@ func main() {
 	app.BoolVar(&newLine, "nl,newline", false, "if true add a trailing newline")
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 	app.BoolVar(&prettyPrint, "p,pretty", false, "pretty print output")
-	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
-	app.BoolVar(&generateManPage, "generate-manpage", false, "output man page")
+	app.BoolVar(&generateMarkdown, "generate-markdown", false, "generate markdown documentation")
+	app.BoolVar(&generateManPage, "generate-manpage", false, "generate man page")
 
 	// Application Options
 	app.StringVar(&appName, "app", "[YOUR APP NAME GOES HERE]", "set the name of your generated app (e.g. helloworld)")
@@ -122,8 +122,8 @@ func main() {
 	defer cli.CloseFile(outputFName, app.Out)
 
 	// Handle options
-	if generateMarkdownDocs {
-		app.GenerateMarkdownDocs(app.Out)
+	if generateMarkdown {
+		app.GenerateMarkdown(app.Out)
 		os.Exit(0)
 	}
 	if generateManPage {

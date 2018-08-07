@@ -31,13 +31,16 @@ import (
 	"time"
 )
 
-const Version = `v0.0.12`
+const Version = `v0.0.13`
 
+//
+// v0.0.13 renames func GenerateMarkdownDocs() to GenerateMarkdown()
+// to better match the GeneratgeManPage().
 //
 // v0.0.5 brings a more wholistic approach to building a cli
 // (command line interface), not just configuring one.
 //
-// Below are the new structs anda funcs that will remain after v0.0.6-dev
+// Below are the new structs and funcs that will remain after v0.0.6-dev
 //
 
 // Open accepts a filename, fallbackFile (usually os.Stdout, os.Stdin, os.Stderr) and returns

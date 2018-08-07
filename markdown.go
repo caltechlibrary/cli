@@ -9,9 +9,10 @@ import (
 	"strings"
 )
 
-// GenerateMarkdownDocs writes a Markdown page to io.Writer provided. Documentation is based on
-// the application's metadata like app name, version, options, actions, etc.
-func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
+// GenerateMarkdown writes a Markdown page to io.Writer provided.
+// Documentation is based on the application's metadata like app name,
+// version, options, actions, etc.
+func (c *Cli) GenerateMarkdown(w io.Writer) {
 	var parts []string
 	parts = append(parts, c.appName)
 	if len(c.options) > 0 {

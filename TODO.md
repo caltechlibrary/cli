@@ -5,16 +5,19 @@
 
 ## Next
 
-+ [ ] Improve markdown to manpage conversion
-+ [ ] Implement default common sectins for "help" map that correspond to the tradtional Man page sections, the help map needs to indicate what "section" number it belongs to for generating man documentation
-
++ [ ] Update Makefile to match current practice (.e.g. website, assets, etc)
++ [ ] Merge pkgassets package into cli package.
++ [ ] Need to word wrap output of cli help, usage, etc. based on console width and height (via man support if running under Unix/Linux/Posix)
 
 ## Someday, Maybe
 
-+ [ ] Need to word wrap output of cli help, usage, etc. based on console width and height
 + [ ] See ...
 
 ## Completed
+
++ [x] Improve markdown to manpage conversion
++ [x] Implement default common sections for "help" map that correspond to the tradtional Man page sections, the help map needs to indicate what "section" number it belongs to for generating man documentation
+
 
 + [x] Environment processing stil doesn't feel right
     + Maybe have an EnvTYPE functions that adds the documentation and returns the value found or default, this would work like flag.StringVar() 
