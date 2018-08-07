@@ -29,7 +29,7 @@ import (
 )
 
 var (
-	midUnderscoreRE = regexp.MustCompile(`[[:alpha:]0-9]_[[:alpha:]0-9]`)
+	midUnderscoreRE = regexp.MustCompile(`([[:alpha:]0-9]_[[:alpha:]0-9]|\\_)`)
 )
 
 // hasMidUnderscore sees if we have an embedded, mid word underscore
