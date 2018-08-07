@@ -167,25 +167,25 @@ func Generate(appName, synopsis, author, descriptionFName, examplesFName, bugsFN
 	if len(descriptionFName) > 0 {
 		description, err = ioutil.ReadFile(descriptionFName)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "WARNING: skipping description %q, %s", descriptionFName)
+			fmt.Fprintf(os.Stderr, "WARNING: skipping description %q, %s", descriptionFName, err)
 		}
 	}
 	if len(examplesFName) > 0 {
 		examples, err = ioutil.ReadFile(examplesFName)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "WARNING: skipping examples %q, %s", examplesFName)
+			fmt.Fprintf(os.Stderr, "WARNING: skipping examples %q, %s", examplesFName, err)
 		}
 	}
 	if len(bugsFName) > 0 {
 		bugs, err = ioutil.ReadFile(bugsFName)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "WARNING: skipping bugs %q, %s", bugsFName)
+			fmt.Fprintf(os.Stderr, "WARNING: skipping bugs %q, %s", bugsFName, err)
 		}
 	}
 	if len(licenseFName) > 0 {
 		bugs, err = ioutil.ReadFile(licenseFName)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "WARNING: skipping license %q, %s", licenseFName)
+			fmt.Fprintf(os.Stderr, "WARNING: skipping license %q, %s", licenseFName, err)
 		}
 	}
 	blocks := []string{}

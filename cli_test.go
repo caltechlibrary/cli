@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -247,5 +248,56 @@ func TestApp(t *testing.T) {
 	}
 	if expectedUserS != userName {
 		t.Errorf("expected %s, got %s", expectedUserS, userName)
+	}
+}
+
+func TestMd2Man(t *testing.T) {
+	s := "This is _in_line_ _italics_ in _Markdown_v1.0.0_"
+	expected := false
+	for i := 0; i < len(s); i++ {
+		start := i
+		end := i + 3
+		if end >= len(s) {
+			break
+		}
+		result := hasMidUnderscore(s, i)
+		if i == 11 || i == 40 {
+			expected = true
+		} else {
+			expected = false
+		}
+		if expected != result {
+			t.Errorf("%d: %q <-- expected %t != %t", i, s[start:end], expected, result)
+		}
+	}
+	src := []byte(`
+This is a *test* of using _in_line_ formatting!
+`)
+	srcR := string(md2man(src))
+	expectedS := `
+This is a \fBtest\fP of using \fIin_line\fP formatting!
+`
+	if srcR != expectedS {
+		t.Errorf("\n%q\n%q\n", expectedS, srcR)
+	}
+}
+
+func TestREMidUnderscoreMethod(t *testing.T) {
+	re := regexp.MustCompile(`[[:alpha:]0-9]_[[:alpha:]0-9]`)
+	s := "This is _in_line_ _italics_ in _Markdown_v1.0.0_"
+	for i := 0; i < len(s); i++ {
+		start := i
+		end := i + 3
+		if end >= len(s) {
+			break
+		}
+		result := re.MatchString(s[start:end])
+		expected := false
+		if i == 10 || i == 39 {
+			expected = true
+		}
+		if result != expected {
+			t.Errorf("%d: %q <-- %t != %t\n", i, s[start:end], result, expected)
+		}
 	}
 }

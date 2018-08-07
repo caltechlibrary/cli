@@ -22,15 +22,31 @@ package cli
 import (
 	"fmt"
 	"io"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
 )
 
+var (
+	midUnderscoreRE = regexp.MustCompile(`[[:alpha:]0-9]_[[:alpha:]0-9]`)
+)
+
+// hasMidUnderscore sees if we have an embedded, mid word underscore
+// base on re in a slice of letters.
+func hasMidUnderscore(s string, cur int) bool {
+	start := cur - 1
+	end := cur + 2
+	if start < 0 || end >= len(s) {
+		return false
+	}
+	return midUnderscoreRE.MatchString(s[start:end])
+}
+
 // inlineMarkdown2man scans a line and converts any inline formatting
 // (e.g. *word*, _word_ to \fBword\fP, \fIword\fP).
-func inlineMarkdown2man(line string) string {
-	letters := strings.Split(line, "")
+func inlineMarkdown2man(s string) string {
+	letters := strings.Split(s, "")
 	inAster := false
 	inUnderscore := false
 	i := 0
@@ -54,7 +70,7 @@ func inlineMarkdown2man(line string) string {
 				letters[i] = "\\fB"
 				inAster = true
 			}
-		} else if letters[i] == "_" {
+		} else if letters[i] == "_" && hasMidUnderscore(s, i) == false {
 			// If startUnderscore is true then close the markdup with \fP and set startUnderscore to false
 			// Else if startUnderscore is false open markup with \fI and set startUnderscore to true
 			if inUnderscore {
@@ -166,6 +182,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		for k, _ := range c.actions {
 			keys = append(keys, k)
 		}
+		fmt.Fprintf(w, ".TP\nThe following actions are supported.\n")
 		// Sort the keys alphabetically and display output
 		sort.Strings(keys)
 		for _, k := range keys {
