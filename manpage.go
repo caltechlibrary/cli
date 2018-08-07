@@ -91,7 +91,8 @@ func inlineMarkdown2man(s string) string {
 func md2man(src []byte) []byte {
 	codeBlock := false
 	lines := strings.Split(string(src), "\n")
-	for i, line := range lines {
+	for i := 0; i < len(lines); i++ {
+		line := lines[i]
 		if codeBlock == false {
 			// Scan line for formatting conversions
 			lines[i] = inlineMarkdown2man(line)
