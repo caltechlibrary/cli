@@ -213,7 +213,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		//FIXME: Need to convert Markdown of examples into nroff with
 		// with man macros.
 		fmt.Fprintf(w, ".SH EXAMPLES\n")
-		fmt.Fprintf(w, ".TP\n%s\n", md2man(section))
+		fmt.Fprintf(w, "\n%s\n", md2man(section))
 	}
 
 	/*

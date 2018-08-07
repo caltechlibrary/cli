@@ -32,8 +32,12 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 	}
 	fmt.Fprintf(w, "\n# USAGE\n\n	%s\n\n", strings.Join(parts, " "))
 
-	if section, ok := c.Documentation["description"]; ok == true {
+	if section, ok := c.Documentation["synopsis"]; ok == true {
 		fmt.Fprintf(w, "## SYNOPSIS\n\n%s\n\n", section)
+	}
+
+	if section, ok := c.Documentation["description"]; ok == true {
+		fmt.Fprintf(w, "## DESCRIPTION\n\n%s\n\n", section)
 	}
 
 	if len(c.env) > 0 {
@@ -61,6 +65,7 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 	if len(c.options) > 0 {
 		fmt.Fprintf(w, "## OPTIONS\n\n")
 		parts := []string{}
+		parts = append(parts, "Below are a set of options available.")
 		if len(c.env) > 0 {
 			parts = append(parts, "Options will override any corresponding environment settings.")
 		}
@@ -116,7 +121,7 @@ func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
 	if len(c.Documentation) > 0 {
 		keys := []string{}
 		for k, _ := range c.actions {
-			if k != "description" && k != "examples" && k != "index" {
+			if k != "synopsis" && k != "description" && k != "examples" && k != "index" {
 				keys = append(keys, k)
 			}
 		}
