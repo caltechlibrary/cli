@@ -280,6 +280,35 @@ This is a \fBtest\fP of using \fIin_line\fP formatting!
 	if srcR != expectedS {
 		t.Errorf("\n%q\n%q\n", expectedS, srcR)
 	}
+
+	s = `use --help EXAMPLE_NAME where EXAMPLE_NAME`
+	expected = false
+	for i := 0; i < len(s); i++ {
+		result := hasMidUnderscore(s, i)
+		if i == 18 || i == 37 {
+			expected = true
+		} else {
+			expected = false
+		}
+		if expected != result {
+			t.Errorf("%d: %q, expected %t, got %t", i, s, expected, result)
+		}
+
+	}
+
+	src = []byte(`
+To view a specific example use --help EXAMPLE_NAME where EXAMPLE_NAME
+is one of the following: getting-started-with-dataset, cloning-and-samples,
+`)
+
+	expectedS = `
+To view a specific example use --help EXAMPLE_NAME where EXAMPLE_NAME
+is one of the following: getting-started-with-dataset, cloning-and-samples,
+`
+	srcR = string(md2man(src))
+	if expectedS != srcR {
+		t.Errorf("Expected %q, got %q", expectedS, srcR)
+	}
 }
 
 func TestREMidUnderscoreMethod(t *testing.T) {
@@ -295,6 +324,8 @@ func TestREMidUnderscoreMethod(t *testing.T) {
 		expected := false
 		if i == 10 || i == 39 {
 			expected = true
+		} else {
+			expected = false
 		}
 		if result != expected {
 			t.Errorf("%d: %q <-- %t != %t\n", i, s[start:end], result, expected)
