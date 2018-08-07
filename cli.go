@@ -27,7 +27,6 @@ import (
 	"io"
 	"os"
 	"path"
-	"sort"
 	"strings"
 	"time"
 )
@@ -160,6 +159,8 @@ type Cli struct {
 	Eout *os.File
 	// Documentation specific help pages, e.g. -help example1
 	Documentation map[string][]byte
+	// SectionNo is the numeric value section value for man page generation
+	SectionNo int
 
 	// ActionsRequired is true then the USAGE line shows ACTION rather than [ACTION]
 	ActionsRequired bool
@@ -187,11 +188,13 @@ func NewCli(version string) *Cli {
 	options := make(map[string]string)
 	actions := make(map[string]*Action)
 	documentation := make(map[string][]byte)
+	sectionNo := 1
 	return &Cli{
 		In:            os.Stdin,
 		Out:           os.Stdout,
 		Eout:          os.Stderr,
 		Documentation: documentation,
+		SectionNo:     sectionNo,
 		appName:       appName,
 		version:       fmt.Sprintf("%s %s", appName, version),
 		env:           env,
@@ -454,10 +457,7 @@ func (c *Cli) AddVerb(verb string, usage string) error {
 	if ok == false {
 		return fmt.Errorf("Failed to add verb docs for %q", verb)
 	}
-	if _, ok := c.Documentation[verb]; ok == false {
-		c.Documentation[verb] = []byte(usage)
-	}
-	return nil
+	return c.AddHelp(verb, []byte(usage))
 }
 
 // AddAction associates a wrapping function with a action name, the wrapping function
@@ -473,10 +473,7 @@ func (c *Cli) AddAction(verb string, fn func(io.Reader, io.Writer, io.Writer, []
 	if ok == false {
 		return fmt.Errorf("Failed to add action %q", verb)
 	}
-	if _, ok := c.Documentation[verb]; ok == false {
-		c.Documentation[verb] = []byte(usage)
-	}
-	return nil
+	return c.AddHelp(verb, []byte(usage))
 }
 
 // Action returns a doc string for a given verb
@@ -521,240 +518,6 @@ func padRight(s, p string, maxWidth int) string {
 		r = append(r, p)
 	}
 	return strings.Join(r, "")
-}
-
-// Usage writes a help page to io.Writer provided. Documentation is based on
-// the application's metadata like app name, version, options, actions, etc.
-func (c *Cli) Usage(w io.Writer) {
-	var parts []string
-	parts = append(parts, c.appName)
-	if len(c.options) > 0 {
-		parts = append(parts, "[OPTIONS]")
-	}
-	// Add parts defined by AddParams()
-	if len(c.actions) > 0 {
-		if len(c.params) > 0 {
-			parts = append(parts, c.params...)
-		}
-		if c.ActionsRequired {
-			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
-		} else {
-			parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
-		}
-	} else if len(c.params) > 0 {
-		parts = append(parts, c.params...)
-	}
-	fmt.Fprintf(w, "\nUSAGE: %s\n\n", strings.Join(parts, " "))
-
-	if section, ok := c.Documentation["description"]; ok == true {
-		fmt.Fprintf(w, "SYNOPSIS\n\n%s\n\n", section)
-	}
-
-	if len(c.env) > 0 {
-		fmt.Fprintf(w, "ENVIRONMENT\n\n")
-		if len(c.options) > 0 {
-			fmt.Fprintf(w, "Environment variables can be overridden by corresponding options\n\n")
-		}
-		keys := []string{}
-		padding := 0
-		for k, _ := range c.env {
-			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
-		}
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.env[k].Usage)
-		}
-		fmt.Fprintf(w, "\n\n")
-	}
-
-	if len(c.options) > 0 {
-		fmt.Fprintf(w, "OPTIONS\n\n")
-		if len(c.env) > 0 {
-			fmt.Fprintf(w, "Options will override any corresponding environment settings\n\n")
-		}
-		keys := []string{}
-		padding := 0
-		for k, _ := range c.options {
-			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
-		}
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.options[k])
-		}
-		fmt.Fprintf(w, "\n\n")
-	}
-
-	if len(c.actions) > 0 {
-		fmt.Fprintf(w, "ACTIONS\n\n")
-		keys := []string{}
-		padding := 0
-		for k, _ := range c.actions {
-			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
-		}
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		for _, k := range keys {
-			usage := c.Action(k)
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
-		}
-		fmt.Fprintf(w, "\n\n")
-	}
-
-	if section, ok := c.Documentation["examples"]; ok == true {
-		fmt.Fprintf(w, "EXAMPLES\n\n%s\n\n", section)
-	}
-
-	if len(c.Documentation) > 0 {
-		keys := []string{}
-		for k, _ := range c.actions {
-			if k != "description" && k != "examples" && k != "index" {
-				keys = append(keys, k)
-			}
-		}
-		if len(keys) > 0 {
-			// Sort the keys alphabetically and display output
-			sort.Strings(keys)
-			fmt.Fprintf(w, "See %s -help TOPIC for topics - %s\n\n", c.appName, strings.Join(keys, ", "))
-		}
-	}
-
-	fmt.Fprintf(w, "%s\n", c.version)
-}
-
-// GenerateMarkdownDocs writes a Markdown page to io.Writer provided. Documentation is based on
-// the application's metadata like app name, version, options, actions, etc.
-func (c *Cli) GenerateMarkdownDocs(w io.Writer) {
-	var parts []string
-	parts = append(parts, c.appName)
-	if len(c.options) > 0 {
-		parts = append(parts, "[OPTIONS]")
-	}
-
-	if len(c.actions) > 0 {
-		if len(c.params) > 0 {
-			parts = append(parts, c.params...)
-		}
-		if c.ActionsRequired {
-			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
-		} else {
-			parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
-		}
-	} else if len(c.params) > 0 {
-		parts = append(parts, c.params...)
-	}
-	fmt.Fprintf(w, "\n# USAGE\n\n	%s\n\n", strings.Join(parts, " "))
-
-	if section, ok := c.Documentation["description"]; ok == true {
-		fmt.Fprintf(w, "## SYNOPSIS\n\n%s\n\n", section)
-	}
-
-	if len(c.env) > 0 {
-		fmt.Fprintf(w, "## ENVIRONMENT\n\n")
-		if len(c.options) > 0 {
-			fmt.Fprintf(w, "Environment variables can be overridden by corresponding options\n\n")
-		}
-		keys := []string{}
-		padding := 0
-		for k, _ := range c.env {
-			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
-		}
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		fmt.Fprintf(w, "```\n")
-		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  # %s\n", padRight(k, " ", padding), c.env[k].Usage)
-		}
-		fmt.Fprintf(w, "```\n\n")
-	}
-
-	if len(c.options) > 0 {
-		fmt.Fprintf(w, "## OPTIONS\n\n")
-		parts := []string{}
-		if len(c.env) > 0 {
-			parts = append(parts, "Options will override any corresponding environment settings.")
-		}
-		if len(c.actions) > 0 {
-			parts = append(parts, "Options are shared between all actions and must precede the action on the command line.")
-		}
-		if len(parts) > 0 {
-			fmt.Fprintf(w, "%s\n\n", strings.Join(parts, " "))
-		}
-		keys := []string{}
-		padding := 0
-		for k, _ := range c.options {
-			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
-		}
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		fmt.Fprintf(w, "```\n")
-		for _, k := range keys {
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), c.options[k])
-		}
-		fmt.Fprintf(w, "```\n")
-		fmt.Fprintf(w, "\n\n")
-	}
-
-	if len(c.actions) > 0 {
-		fmt.Fprintf(w, "## ACTIONS\n\n")
-		keys := []string{}
-		padding := 0
-		for k, _ := range c.actions {
-			keys = append(keys, k)
-			if len(k) > padding {
-				padding = len(k) + 1
-			}
-		}
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		fmt.Fprintf(w, "```\n")
-		for _, k := range keys {
-			usage := c.Action(k)
-			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
-		}
-		fmt.Fprintf(w, "```\n")
-		fmt.Fprintf(w, "\n\n")
-	}
-
-	if section, ok := c.Documentation["examples"]; ok == true {
-		fmt.Fprintf(w, "## EXAMPLES\n\n%s\n\n", section)
-	}
-
-	if len(c.Documentation) > 0 {
-		keys := []string{}
-		for k, _ := range c.actions {
-			if k != "description" && k != "examples" && k != "index" {
-				keys = append(keys, k)
-			}
-		}
-		if len(keys) > 0 {
-			// Sort the keys alphabetically and display output
-			sort.Strings(keys)
-			links := []string{}
-			for _, key := range keys {
-				links = append(links, fmt.Sprintf("[%s](%s.html)", key, key))
-			}
-			fmt.Fprintf(w, "Related: %s\n\n", strings.Join(links, ", "))
-		}
-	}
-
-	fmt.Fprintf(w, "%s\n", c.version)
 }
 
 func (c *Cli) License() string {

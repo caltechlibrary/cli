@@ -20,7 +20,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	// Caltech Library Packages
@@ -28,15 +27,28 @@ import (
 )
 
 var (
+	synopsis = `The cli package and cli application generator 
+provides a standard way to construct a command line interfaces
+encouraging uniformity across applications built at Caltech
+Library. The _cligenerator_ program is intended primarily to be
+an example of how to use the *cli* package.
+`
+
 	description = `This is a cli application generator. It also demonstrates
 how to use the cli package.
 `
 
 	examples = `Example generating a new "helloworld"
 
-    cligenerate -app=helloworld -name="@author Jane Doe, <jane.doe@example.edu>" \
-                 -decription="This is a demo cli" -use-license=LICENSE
+` + "```" + `
+    cligenerate -app=helloworld \
+        -name="@author Jane Doe, <jane.doe@example.edu>" \
+        -decription="This is a demo cli" \
+        -use-license=LICENSE
+` + "```" + `
 `
+
+	bugs = `_cligenerator_ is only a proof of concept implementation`
 
 	// Standard Options
 	showHelp             bool
@@ -52,16 +64,21 @@ how to use the cli package.
 	generateManPage      bool
 
 	// Application Options
-	appName         string
-	appAuthor       string
-	appDescription  string
-	licenseFilename string
+	appName             string
+	appAuthor           string
+	appSynopsis         string
+	descriptionFilename string
+	examplesFilename    string
+	bugsFilename        string
+	licenseFilename     string
 )
 
 func main() {
 	app := cli.NewCli(cli.Version)
 
 	// Add Help Docs
+	app.SectionNo = 1 // Manual page section number to document
+	app.AddHelp("synopsis", []byte(synopsis))
 	app.AddHelp("description", []byte(description))
 	app.AddHelp("examples", []byte(examples))
 
@@ -79,10 +96,14 @@ func main() {
 	app.BoolVar(&generateManPage, "generate-manpage", false, "output man page")
 
 	// Application Options
-	app.StringVar(&appName, "app", "[YOUR APP NAME GOES HERE]", "set the name of your generated app, e.g. helloworld")
-	app.StringVar(&appAuthor, "name,author", "[YOUR AUTHOR STRING GOES HERE]", "set the author name, e.g. '@author Jane Doe, <jane.doe@example.edu>'")
-	app.StringVar(&appDescription, "description", "[SHORT APP DESCRIPTION GOES HERE]", "set a short application description, e.g. says 'Hello World!'")
-	app.StringVar(&licenseFilename, "use-license", "LICENSE", "set the license file name to read in, defaults to LICENSE")
+	app.StringVar(&appName, "app", "[YOUR APP NAME GOES HERE]", "set the name of your generated app (e.g. helloworld)")
+	app.StringVar(&appSynopsis, "synopsis", "[SHORT APP DESCRIPTION GOES HERE]", "set a short application description (e.g. says 'Hello World!')")
+	app.StringVar(&appAuthor, "name,author", "[YOUR AUTHOR STRING GOES HERE]", "set the author name (e.g. '@author Jane Doe, <jane.doe@example.edu>')")
+
+	app.StringVar(&descriptionFilename, "use-description", "README.md", "filename holding a detailed description of application.")
+	app.StringVar(&examplesFilename, "use-examples", "examples.md", "filename holding examples")
+	app.StringVar(&licenseFilename, "use-license", "LICENSE", "filename holding the license")
+	app.StringVar(&bugsFilename, "use-bugs", "BUGS.md", "filename holding bugs")
 
 	// We're ready to process args
 	app.Parse()
@@ -127,10 +148,7 @@ func main() {
 	}
 
 	// Run the app!
-	licenseSrc, err := ioutil.ReadFile(licenseFilename)
-	cli.ExitOnError(app.Eout, err, quiet)
-
-	srcCode := cli.Generate(appName, appDescription, appAuthor, fmt.Sprintf("%s", licenseSrc))
+	srcCode := cli.Generate(appName, appSynopsis, appAuthor, descriptionFilename, licenseFilename, examplesFilename, bugsFilename)
 	fmt.Fprintf(app.Out, "%s", srcCode)
 
 	if newLine {

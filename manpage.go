@@ -27,6 +27,49 @@ import (
 	"time"
 )
 
+// inlineMarkdown2man scans a line and converts any inline formatting
+// (e.g. *word*, _word_ to \fBword\fP, \fIword\fP).
+func inlineMarkdown2man(line string) string {
+	letters := strings.Split(line, "")
+	inAster := false
+	inUnderscore := false
+	i := 0
+	for {
+		// Exit loop early
+		if i >= len(letters) {
+			break
+		}
+		// Skip any escape characters
+		if letters[i] == "\\" {
+			i++
+			continue
+		}
+		if letters[i] == "*" {
+			// If inAster is true then close the markup with \fP and set inAster to false
+			// Else if inAster == false open the markup with \fB and set inAster to true
+			if inAster {
+				letters[i] = "\\fP"
+				inAster = false
+			} else {
+				letters[i] = "\\fB"
+				inAster = true
+			}
+		} else if letters[i] == "_" {
+			// If startUnderscore is true then close the markdup with \fP and set startUnderscore to false
+			// Else if startUnderscore is false open markup with \fI and set startUnderscore to true
+			if inUnderscore {
+				letters[i] = "\\fP"
+				inUnderscore = false
+			} else {
+				letters[i] = "\\fI"
+				inUnderscore = true
+			}
+		}
+		i++
+	}
+	return strings.Join(letters, "")
+}
+
 // md2man will try to do a crude conversion of Markdown
 // to nroff man macros.
 func md2man(src []byte) []byte {
@@ -35,14 +78,19 @@ func md2man(src []byte) []byte {
 	for i, line := range lines {
 		if codeBlock == false {
 			// Scan line for formatting conversions
+			lines[i] = inlineMarkdown2man(line)
+		} else {
+			if strings.HasSuffix(line, " \\") {
+				lines[i] = line + "\\"
+			}
 		}
 		// Scan line for code block handling
 		if strings.HasPrefix(line, "```") {
 			if codeBlock {
-				lines[i] = `.EP`
+				lines[i] = ".EP\n"
 				codeBlock = false
 			} else {
-				lines[i] = `.EX`
+				lines[i] = "\n.EX\n"
 				codeBlock = true
 			}
 		}
@@ -57,7 +105,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	var parts []string
 
 	// .TH {appName} {section_no} {version} {date}
-	fmt.Fprintf(w, ".TH %s %d %q %q\n", c.appName, 1, time.Now().Format("2006 Jan 02"), strings.TrimSpace(strings.Replace(c.Version(), c.appName+" ", "", 1)))
+	fmt.Fprintf(w, ".TH %s %d %q %q\n", c.appName, c.SectionNo, time.Now().Format("2006 Jan 02"), strings.TrimSpace(c.Version()))
 
 	parts = append(parts, fmt.Sprintf(".TP\n\\fB%s\\fP", c.appName))
 	if len(c.options) > 0 {
@@ -80,9 +128,12 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	fmt.Fprintf(w, ".SH USAGE\n%s\n", strings.Join(parts, " "))
 
 	// .SH SYNOPSIS
+	if section, ok := c.Documentation["synopsis"]; ok == true {
+		fmt.Fprintf(w, ".SH SYNOPSIS\n%s\n", md2man(section))
+	}
 	// .SH DESCRIPTION
 	if section, ok := c.Documentation["description"]; ok == true {
-		fmt.Fprintf(w, ".SH SYNOPSIS\n%s\n", section)
+		fmt.Fprintf(w, ".SH DESCRIPTION\n%s\n", md2man(section))
 	}
 
 	if len(c.options) > 0 {
@@ -95,8 +146,9 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 			parts = append(parts, ".TP\nOptions are shared between all actions and must precede the action on the command line.\n")
 		}
 		if len(parts) > 0 {
-			fmt.Fprintf(w, "%s", strings.Join(parts, ""))
+			fmt.Fprintf(w, "%s", strings.Join(parts, "\n"))
 		}
+		fmt.Fprintf(w, ".TP\nThe following options are supported.\n")
 		keys := []string{}
 		for k, _ := range c.options {
 			keys = append(keys, k)
@@ -109,7 +161,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	}
 
 	if len(c.actions) > 0 {
-		fmt.Fprintf(w, ".SS ACTIONS\n")
+		fmt.Fprintf(w, "\n.SS ACTIONS\n")
 		keys := []string{}
 		for k, _ := range c.actions {
 			keys = append(keys, k)
@@ -123,7 +175,7 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 	}
 
 	if len(c.env) > 0 {
-		fmt.Fprintf(w, ".SS ENVIRONMENT\n")
+		fmt.Fprintf(w, "\n.SS ENVIRONMENT\n")
 		if len(c.options) > 0 {
 			fmt.Fprintf(w, "Environment variables can be overridden by corresponding options\n")
 		}

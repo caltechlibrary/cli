@@ -6,6 +6,8 @@
 ## Next
 
 + [ ] Improve markdown to manpage conversion
++ [ ] Implement default common sectins for "help" map that correspond to the tradtional Man page sections, the help map needs to indicate what "section" number it belongs to for generating man documentation
+
 
 ## Someday, Maybe
 

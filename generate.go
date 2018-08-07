@@ -5,6 +5,8 @@ package cli
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -31,9 +33,15 @@ import (
 	varBlock = `
 
 var (
+	synopsis = %s
+
 	description = %s
 
 	examples = %s 
+
+	bugs = %s
+
+	license = %s
 
 	// Standard Options
 	showHelp bool
@@ -46,6 +54,7 @@ var (
 	quiet bool
 	prettyPrint bool
 	generateMarkdownDocs bool
+	generateManPage bool
 
 	// Application Options
 )
@@ -61,8 +70,11 @@ func main() {
 	//appName := app.AppName()
 
 	// Add Help Docs
+	app.SectionNo = 1 // The manual page section number
+	app.AddHelp("synopsis", []byte(synopsis))
 	app.AddHelp("description", []byte(description))
 	app.AddHelp("examples", []byte(examples))
+	app.AddHelp("bugs", []byte(bugs))
 
 	// Standard Options
 	app.BoolVar(&showHelp, "h,help", false, "display help")
@@ -75,6 +87,7 @@ func main() {
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 	app.BoolVar(&prettyPrint, "p,pretty", false, "pretty print output")
 	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateManPage, "generate-manpage", false, "output manpage markup")
 
 	// Application Options
 	//FIXME: Add any application specific options
@@ -101,6 +114,10 @@ func main() {
 	// Handle options
 	if generateMarkdownDocs {
 		app.GenerateMarkdownDocs(app.Out)
+		os.Exit(0)
+	}
+	if generateManPage {
+		app.GenerateManPage(app.Out)
 		os.Exit(0)
 	}
 	if showHelp || showExamples {
@@ -139,18 +156,55 @@ func backQuote(s string) string {
 }
 
 // Generate creates main.go source code
-func Generate(appName, description, author, license string) []byte {
+func Generate(appName, synopsis, author, descriptionFName, examplesFName, bugsFName, licenseFName string) []byte {
+	var (
+		description []byte
+		examples    []byte
+		license     []byte
+		bugs        []byte
+		err         error
+	)
+	if len(descriptionFName) > 0 {
+		description, err = ioutil.ReadFile(descriptionFName)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "WARNING: skipping description %q, %s", descriptionFName)
+		}
+	}
+	if len(examplesFName) > 0 {
+		examples, err = ioutil.ReadFile(examplesFName)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "WARNING: skipping examples %q, %s", examplesFName)
+		}
+	}
+	if len(bugsFName) > 0 {
+		bugs, err = ioutil.ReadFile(bugsFName)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "WARNING: skipping bugs %q, %s", bugsFName)
+		}
+	}
+	if len(licenseFName) > 0 {
+		bugs, err = ioutil.ReadFile(licenseFName)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "WARNING: skipping license %q, %s", licenseFName)
+		}
+	}
 	blocks := []string{}
 	// Setup the initial comment block
-	blocks = append(blocks, fmt.Sprintf(commentBlock, appName, description, author))
+	blocks = append(blocks, fmt.Sprintf(commentBlock, appName, string(synopsis), author))
 	// Add the license
-	blocks = append(blocks, fmt.Sprintf("//%s\n", strings.Replace(license, "\n", "\n// ", -1)))
+	blocks = append(blocks, fmt.Sprintf("//%s\n", strings.Replace(string(license), "\n", "\n// ", -1)))
 	// Add Package name
 	blocks = append(blocks, "package main")
 	// Add Standard Imports
 	blocks = append(blocks, importsBlock)
 	// Add Global vars
-	blocks = append(blocks, fmt.Sprintf(varBlock, backQuote(description), backQuote("[FIXME: examples go here]")))
+	blocks = append(blocks, fmt.Sprintf(varBlock,
+		backQuote(string(synopsis)),
+		backQuote(string(description)),
+		backQuote(string(examples)),
+		backQuote(string(bugs)),
+		backQuote(string(license)),
+	))
 	// Add Main
 	blocks = append(blocks, mainBlock)
 
