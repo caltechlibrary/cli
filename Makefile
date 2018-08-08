@@ -21,11 +21,16 @@ install:
 	env GOBIN=$(HOME)/bin go install cmd/cligenerate/cligenerate.go
 
 clean:
-	if [ -d dist ]; then rm -fR dist; fi
 	if [ -d bin ]; then rm -fR bin; fi
+	if [ -d dist ]; then rm -fR dist; fi
+	if [ -d man ]; then rm -fR man; fi
 
 test:
 	go test
+
+man: build
+	mkdir -p man/man1
+	bin/cligenerate -generate-manpage | nroff -Tutf8 -man > man/man1/cligenerate.1
 
 status:
 	git status
