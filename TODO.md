@@ -3,6 +3,8 @@
 
 ## Bugs
 
++ [ ] Man page text doesn't seem to wrap correctly, improve nroff output/markup
+
 ## Next
 
 + [ ] Update Makefile to match current practice (.e.g. website, assets, etc)
@@ -11,7 +13,7 @@
 
 ## Someday, Maybe
 
-+ [ ] See ...
++ [ ] Add support for OPTIONS per verb (e.g. myapp dothis -i myfile.txt)
 
 ## Completed
 
