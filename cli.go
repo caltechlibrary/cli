@@ -1,10 +1,10 @@
 /**
- * cli is a package intended to encourage some standardization in the command line user interface for programs
- * developed for Caltech Library.
+ * cli is a package intended to encourage some standardization in the
+ * command line user interface for programs developed for Caltech Library.
  *
- * @author R. S. Doiel, <rsdoiel@caltech.edu>
+ * @author R. S. Doiel, <rsdoiel@library.caltech.edu>
  *
- * Copyright (c) 2016, Caltech
+ * Copyright (c) 2018, Caltech
  * All rights not granted herein are expressly reserved by Caltech.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -34,13 +34,17 @@ import (
 const Version = `v0.0.14`
 
 //
+// v0.0.14 removes depreciated pre-v0.0.5 code, adds more flexible
+// Verb metaphor to replace Actions. Supports adding options to
+// Verbs. Removes AddHelp() called in from AddVerb() and AddAction().
+//
 // v0.0.13 renames func GenerateMarkdownDocs() to GenerateMarkdown()
 // to better match the GeneratgeManPage().
 //
 // v0.0.5 brings a more wholistic approach to building a cli
 // (command line interface), not just configuring one.
 //
-// Below are the new structs and funcs that will remain after v0.0.6-dev
+// Below are the structs and funcs that will remain after v0.0.6-dev
 //
 
 // Open accepts a filename, fallbackFile (usually os.Stdout, os.Stdin, os.Stderr) and returns
@@ -140,18 +144,6 @@ func PushArg(s string, args []string) []string {
 	return []string{s}
 }
 
-// Action describes an "action" that a cli might take. Actions aren't prefixed with a "-".
-type Action struct {
-	// Name is usually a verb like list, test, build as needed by the cli
-	Name string
-	// Fn is action that will be run by Cli.Run() if Name is the first non-option arg on the command line
-	//NOTE: currently the signature is io based but may be changed to *os.File in
-	// the future
-	Fn func(io.Reader, io.Writer, io.Writer, []string) int
-	// Usage is a short description of what the action does and description of any expected additoinal parameters
-	Usage string
-}
-
 // Cli models the metadata for running a common cli program
 type Cli struct {
 	// In is usually set to os.Stdin
@@ -178,9 +170,15 @@ type Cli struct {
 	params []string
 	// description of short/long options and their doc strings
 	options map[string]string
-	// non-flag options, e.g. in the command line "go test", "test" would be the action string. Any
-	// additional parameters would be handed of the associated Action.
+
+	// (depreciated) non-flag options, e.g. in the command line "go test", "test" would be the action string.
+	// Any additional parameters would be handed of the associated Action.
 	actions map[string]*Action
+
+	// non-flag options, e.g. in the command line "go test", "test"
+	// would be the verb string.  Additional options and parameters can be
+	// associated with a verb phrase
+	verbs map[string]*Verb
 }
 
 // NewCli creates an Cli instance, an Cli describes the running of the command line interface
@@ -189,9 +187,12 @@ func NewCli(version string) *Cli {
 	appName := path.Base(os.Args[0])
 	env := make(map[string]*EnvAttribute)
 	options := make(map[string]string)
+	//NOTE: actions is depreciated
 	actions := make(map[string]*Action)
+	//NOTE: verbs will eventually replace actions
+	verbs := make(map[string]*Verb)
 	documentation := make(map[string][]byte)
-	sectionNo := 1
+	sectionNo := 0
 	return &Cli{
 		In:            os.Stdin,
 		Out:           os.Stdout,
@@ -204,6 +205,7 @@ func NewCli(version string) *Cli {
 		params:        []string{},
 		options:       options,
 		actions:       actions,
+		verbs:         verbs,
 	}
 }
 
@@ -217,11 +219,14 @@ func (c *Cli) AppName() string {
 func (c *Cli) Verb(args []string) string {
 	var ok bool
 	for _, verb := range args {
+		if _, ok = c.verbs[verb]; ok == true {
+			return verb
+		}
+		//NOTE: we check actions as fallback for now ...
 		if _, ok = c.actions[verb]; ok == true {
 			return verb
 		}
 	}
-
 	return ""
 }
 
@@ -412,6 +417,7 @@ func (c *Cli) Options() map[string]string {
 // ParseOptions envokes flag.Parse() updating variables set in AddOptions
 func (c *Cli) ParseOptions() {
 	flag.Parse()
+	//FIXME: need to parse options for verbs is present...
 }
 
 // Parse process both the environment and any flags
@@ -439,64 +445,39 @@ func (c *Cli) NArg() int {
 	return flag.NArg()
 }
 
-// Add Params documents any parameters not defined as Options or Actions, it is an orders list of strings
+// Add Params documents any parameters not defined as Options, Verbs or Actions, it is an orders list of strings
 func (c *Cli) AddParams(params ...string) {
 	for _, param := range params {
 		c.params = append(c.params, param)
 	}
 }
 
-// String prints an actions' verb and description
-func (a *Action) String() string {
-	return fmt.Sprintf("%s - %s", a.Name, a.Usage)
-}
-
-// AddVerb associates a verb and synopsis without assigning a function
-// (e.g. if you aren't going to use cli.Run()
-func (c *Cli) AddVerb(verb string, usage string) error {
-	c.actions[verb] = &Action{
-		Name:  verb,
-		Usage: usage,
+// NewVerb associates a verb, synopsis and function with a
+// command line interface. It supercedes AddVerb(),
+// and AddAction(). Verbs can have their own options and
+// documentation.
+func (c *Cli) NewVerb(name string, usage string, fn func(io.Reader, io.Writer, io.Writer, []string) int) (*Verb, error) {
+	verb := new(Verb)
+	verb.Name = name
+	verb.Usage = usage
+	if fn != nil {
+		verb.Fn = fn
 	}
-	_, ok := c.actions[verb]
+	c.verbs[name] = verb
+	_, ok := c.verbs[name]
 	if ok == false {
-		return fmt.Errorf("Failed to add verb docs for %q", verb)
+		return nil, fmt.Errorf("could not add %q verb", name)
 	}
-	return nil
+	return verb, nil
 }
 
-// AddAction associates a wrapping function with a action name, the wrapping function
-// has 4 parameters in io.Reader, out io.Writer, err io.Writer, args []string. It should return
-// an integer reflecting an exit code like you'd pass to os.Exit().
-func (c *Cli) AddAction(verb string, fn func(io.Reader, io.Writer, io.Writer, []string) int, usage string) error {
-	c.actions[verb] = &Action{
-		Name:  verb,
-		Fn:    fn,
-		Usage: usage,
+// Verbs returns a map of verbs and their doc strings
+func (c *Cli) Verbs() map[string]string {
+	verbs := map[string]string{}
+	for k, verb := range c.verbs {
+		verbs[k] = verb.Usage
 	}
-	_, ok := c.actions[verb]
-	if ok == false {
-		return fmt.Errorf("Failed to add action %q", verb)
-	}
-	return nil
-}
-
-// Action returns a doc string for a given verb
-func (c *Cli) Action(verb string) string {
-	action, ok := c.actions[verb]
-	if ok == false {
-		return fmt.Sprintf("%q is not a defined action", verb)
-	}
-	return action.Usage
-}
-
-// Actions returns a map of actions and their doc strings
-func (c *Cli) Actions() map[string]string {
-	actions := map[string]string{}
-	for k, action := range c.actions {
-		actions[k] = action.Usage
-	}
-	return actions
+	return verbs
 }
 
 // (c *Cli) Run takes a list of non-option arguments and runs them if the fist arg (i.e. arg[0]
@@ -506,14 +487,20 @@ func (c *Cli) Run(args []string) int {
 		fmt.Fprintf(c.Eout, "Nothing to do\n")
 		return 1
 	}
-	verb, rest := ShiftArg(args)
-	verb = strings.TrimSpace(verb)
-	action, ok := c.actions[verb]
+	name, rest := ShiftArg(args)
+	name = strings.TrimSpace(name)
+	verb, ok := c.verbs[name]
 	if ok == false {
-		fmt.Fprintf(c.Eout, "do not known how to %q with %q\n", verb, rest)
-		return 1
+		//NOTE: when Action is depreciated fully, we can short
+		// circuit this with an error response and value.
+		action, ok := c.actions[name]
+		if ok == false {
+			fmt.Fprintf(c.Eout, "do not known how to %q with %q\n", verb, rest)
+			return 1
+		}
+		return action.Fn(c.In, c.Out, c.Eout, rest)
 	}
-	return action.Fn(c.In, c.Out, c.Eout, rest)
+	return verb.Fn(c.In, c.Out, c.Eout, rest)
 }
 
 func padRight(s, p string, maxWidth int) string {

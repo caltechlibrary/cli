@@ -15,12 +15,15 @@ Features include:
 + The `Cli` object supports the following functions
     + `AppName()` returns the compiled application name
     + `AddParams()` for documenting required and optional non-option parameters
-    + `AddAction()` for git/go stale verb with parameters ui
+    + `AddAction()` for verb style command lines, associates verb, func and doc string
+    + `AddVerb()` for verb style command lines, associates verb and doc string
+    + `AddFlagSet()` for associating flags with the command or verb
     + `AddHelp()` for adding help topics by page name
     + `Help()` string for searching your help topics by page name
-    + `Usage() string` builds a page for show general help - usage, description, options and examples
+    + `Usage() string` builds a page for show general help - synopsis, description, options and examples
     + `License() string` builds a license page as a string
     + `Version() string` builds a version string
     + `Run()` for running defined actions and returning an exit code suitable for passing to `os.Exit()`
     + `GenerateMarkdownDocs()` for generating documentation based on how the program in implemented
+    + `GenerateManPage()` for generating nroff man page documentation
 
