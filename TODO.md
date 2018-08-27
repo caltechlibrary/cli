@@ -4,9 +4,11 @@
 ## Bugs
 
 + [ ] Man page text doesn't seem to wrap correctly, improve nroff output/markup
++ [ ] Man page on Mac OS X, options begin with 'a' not a dash
 
 ## Next
 
++ [ ] Add support for a verb's options
 + [ ] Update Makefile to match current practice (.e.g. website, assets, etc)
 + [ ] Merge pkgassets package into cli package.
 + [ ] Need to word wrap output of cli help, usage, etc. based on console width and height (via man support if running under Unix/Linux/Posix)

@@ -31,7 +31,7 @@ import (
 	"time"
 )
 
-const Version = `v0.0.13`
+const Version = `v0.0.14`
 
 //
 // v0.0.13 renames func GenerateMarkdownDocs() to GenerateMarkdown()
@@ -160,6 +160,8 @@ type Cli struct {
 	Out *os.File
 	// Eout is usually set to os.Stderr
 	Eout *os.File
+	// Synopsis is a single line description (e.g. list the synopsis of a verb)
+	Synopsis map[string][]byte
 	// Documentation specific help pages, e.g. -help example1
 	Documentation map[string][]byte
 	// SectionNo is the numeric value section value for man page generation
@@ -236,17 +238,35 @@ func (c *Cli) AddHelp(keyword string, usage []byte) error {
 	return nil
 }
 
-// Help returns documentation on a topic
+// AddSynopsis takes a string keyword and byte slice of content and
+// updates the Synopsis attribute. The Synopsis should be a short
+// brief description like you'd expect describing a flag or verb.
+func (c *Cli) AddSynopsis(keyword string, usage []byte) error {
+	c.Synopsis[keyword] = usage
+	_, ok := c.Synopsis[keyword]
+	if ok == false {
+		return fmt.Errorf("could not add synopsis for %q", keyword)
+	}
+	return nil
+}
+
+// Help returns documentation on a topic. If first looks in
+// Documentation map and if nothing found looks in Synopsis map
+// and if not there return an empty string not documented string.
 func (c *Cli) Help(keywords ...string) string {
 	var sections []string
 
 	for _, keyword := range keywords {
-		usage, ok := c.Documentation[keyword]
-		if ok == false {
-			sections = append(sections, fmt.Sprintf("%q not documented", keyword))
-			continue
+		if description, ok := c.Documentation[keyword]; ok == false {
+			if synopsis, ok := c.Synopsis[keyword]; ok == false {
+				sections = append(sections, fmt.Sprintf("%q not documented", keyword))
+				continue
+			} else {
+				sections = append(sections, fmt.Sprintf("%s\n\n%s", strings.ToUpper(keyword), synopsis))
+			}
+		} else {
+			sections = append(sections, fmt.Sprintf("%s\n\n%s", strings.ToUpper(keyword), description))
 		}
-		sections = append(sections, fmt.Sprintf("%s\n\n%s", strings.ToUpper(keyword), usage))
 	}
 	return strings.Join(sections, "\n\n")
 }
@@ -460,7 +480,7 @@ func (c *Cli) AddVerb(verb string, usage string) error {
 	if ok == false {
 		return fmt.Errorf("Failed to add verb docs for %q", verb)
 	}
-	return c.AddHelp(verb, []byte(usage))
+	return c.AddSynopsis(verb, []byte(usage))
 }
 
 // AddAction associates a wrapping function with a action name, the wrapping function
