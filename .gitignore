@@ -1,6 +1,7 @@
 *~
 *.swp
 .DS_Store
-bin/*
-dist/*
-testdata/*
+bin/
+dist/
+testdata/
+man/
