@@ -31,31 +31,11 @@ using Go.</p>
 <p>Features include:</p>
 
 <ul>
-<li>A common <code>Cli</code> object generated with <code>cli.NewCli()</code> representing configuration, environment and command line
-
-<ul>
-<li>environment and options share the same approach as Go&rsquo;s standard flag package</li>
-<li>options support multiple options (long/short version) in option&rsquo;s flag string separating options by comma</li>
-<li>generate help and usage, sysnopsis, options, examples, license based on programaticly</li>
-</ul></li>
-<li>A common <code>Create</code>, <code>Open</code> and <code>Close</code> file wrapper for integrating standard in/out/err as fallback</li>
-<li>The <code>Cli</code> object supports the following functions
-
-<ul>
-<li><code>AppName()</code> returns the compiled application name</li>
-<li><code>AddParams()</code> for documenting required and optional non-option parameters</li>
-<li><code>AddAction()</code> for verb style command lines, associates verb, func and doc string</li>
-<li><code>AddVerb()</code> for verb style command lines, associates verb and doc string</li>
-<li><code>AddFlagSet()</code> for associating flags with the command or verb</li>
-<li><code>AddHelp()</code> for adding help topics by page name</li>
-<li><code>Help()</code> string for searching your help topics by page name</li>
-<li><code>Usage() string</code> builds a page for show general help - synopsis, description, options and examples</li>
-<li><code>License() string</code> builds a license page as a string</li>
-<li><code>Version() string</code> builds a version string</li>
-<li><code>Run()</code> for running defined actions and returning an exit code suitable for passing to <code>os.Exit()</code></li>
-<li><code>GenerateMarkdownDocs()</code> for generating documentation based on how the program in implemented</li>
-<li><code>GenerateManPage()</code> for generating nroff man page documentation</li>
-</ul></li>
+<li>Code generation for a command line tool</li>
+<li>Integrated support for generating Markdown docs from a cli program</li>
+<li>Integrated support for generating man pages from a cli program</li>
+<li>Short/Long option (flag) support for both the command and verbs</li>
+<li><a href="https://codemeta.github.io/">codemeta.json</a> management and tooling</li>
 </ul>
 
 <h2>Command line tools</h2>
@@ -64,6 +44,7 @@ using Go.</p>
 
 <ul>
 <li><a href="docs/cligenerate.html">cligenerate</a> - will generate a skelton command line program</li>
+<li><a href="docs/codemeta.html">codemeta</a> - a tool for managing a project&rsquo;s <a href="https://codemeta.github.io/">codemeta.json</a> file.</li>
 <li><a href="docs/pkgassets.html">pkgassets</a> - will take Markdown docs and create a go program file where each doc&rsquo;s name is the key and contents are the byte array value representing the docs</li>
 </ul>
 

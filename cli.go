@@ -476,7 +476,7 @@ func (c *Cli) AddParams(params ...string) {
 // command line interface. It supercedes AddVerb(),
 // and AddAction(). Verbs can have their own options and
 // documentation.
-func (c *Cli) NewVerb(name string, usage string, fn func(io.Reader, io.Writer, io.Writer, []string) int) (*Verb, error) {
+func (c *Cli) NewVerb(name string, usage string, fn func(io.Reader, io.Writer, io.Writer, []string) int) *Verb {
 	verb := new(Verb)
 	verb.Name = name
 	verb.Usage = usage
@@ -484,11 +484,7 @@ func (c *Cli) NewVerb(name string, usage string, fn func(io.Reader, io.Writer, i
 		verb.Fn = fn
 	}
 	c.verbs[name] = verb
-	_, ok := c.verbs[name]
-	if ok == false {
-		return nil, fmt.Errorf("could not add %q verb", name)
-	}
-	return verb, nil
+	return verb
 }
 
 // Verbs returns a map of verbs and their doc strings

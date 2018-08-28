@@ -46,6 +46,7 @@ how to use the cli package.
         -decription="This is a demo cli" \
         -use-license=LICENSE
 ` + "```" + `
+
 `
 
 	bugs = `_cligenerator_ is only a proof of concept implementation`
@@ -86,7 +87,7 @@ func main() {
 	app.BoolVar(&showHelp, "h,help", false, "display help")
 	app.BoolVar(&showLicense, "l,license", false, "display license")
 	app.BoolVar(&showVersion, "v,version", false, "display version")
-	app.BoolVar(&showExamples, "e,examples", false, "display examples")
+	app.BoolVar(&showExamples, "examples", false, "display examples")
 	app.StringVar(&inputFName, "i,input", "", "input file name")
 	app.StringVar(&outputFName, "o,output", "", "output file name")
 	app.BoolVar(&newLine, "nl,newline", false, "if true add a trailing newline")
@@ -97,13 +98,13 @@ func main() {
 
 	// Application Options
 	app.StringVar(&appName, "app", "[YOUR APP NAME GOES HERE]", "set the name of your generated app (e.g. helloworld)")
-	app.StringVar(&appSynopsis, "synopsis", "[SHORT APP DESCRIPTION GOES HERE]", "set a short application description (e.g. says 'Hello World!')")
+	app.StringVar(&appSynopsis, "synopsis", "[SHORT APP DESCRIPTION GOES HERE]", "set a short application synopsis (e.g. says 'Hello World!')")
 	app.StringVar(&appAuthor, "name,author", "[YOUR AUTHOR STRING GOES HERE]", "set the author name (e.g. '@author Jane Doe, <jane.doe@example.edu>')")
 
-	app.StringVar(&descriptionFilename, "use-description", "README.md", "filename holding a detailed description of application.")
-	app.StringVar(&examplesFilename, "use-examples", "examples.md", "filename holding examples")
+	app.StringVar(&descriptionFilename, "use-description", "", "filename holding a detailed description of application.")
+	app.StringVar(&examplesFilename, "use-examples", "", "filename holding examples")
 	app.StringVar(&licenseFilename, "use-license", "LICENSE", "filename holding the license")
-	app.StringVar(&bugsFilename, "use-bugs", "BUGS.md", "filename holding bugs")
+	app.StringVar(&bugsFilename, "use-bugs", "", "filename holding bugs")
 
 	// We're ready to process args
 	app.Parse()
@@ -148,7 +149,7 @@ func main() {
 	}
 
 	// Run the app!
-	srcCode := cli.Generate(appName, appSynopsis, appAuthor, descriptionFilename, licenseFilename, examplesFilename, bugsFilename)
+	srcCode := cli.Generate(appName, appSynopsis, appAuthor, descriptionFilename, examplesFilename, bugsFilename, licenseFilename)
 	fmt.Fprintf(app.Out, "%s", srcCode)
 
 	if newLine {

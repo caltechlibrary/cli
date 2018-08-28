@@ -15,14 +15,17 @@ ifeq ($(OS), Windows)
 endif
 
 build: bootstrap
-	go build -o bin/cligenerate$(EXT) cmd/cligenerate/cligenerate.go
 	go build -o bin/pkgassets$(EXT) cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
+	go build -o bin/cligenerate$(EXT) cmd/cligenerate/cligenerate.go
+	go build -o bin/codemeta$(EXT) cmd/codemeta/codemeta.go
 
 
 man: build
 	mkdir -p man/man1
 	bin/cligenerate -generate-manpage | nroff -Tutf8 -man > man/man1/cligenerate.1
 	bin/pkgassets -generate-manpage | nroff -Tutf8 -man > man/man1/pkgassets.1
+	bin/codemeta -generate-manpage | nroff -Tutf8 -man > man/man1/codemeta.1
+
 
 bootstrap: 
 	echo "Bookstrapping bin/pkgassets"
@@ -58,15 +61,18 @@ clean:
 
 install: build bootstrap
 	env GOBIN=$(GOPATH)/bin go install cmd/cligenerate/cligenerate.go
+	env GOBIN=$(GOPATH)/bin go install cmd/codemeta/codemeta.go
 	env GOBIN=$(GOPATH)/bin go install cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	mkdir -p $(GOPATH)/man/man1
 	$(GOPATH)/bin/cligenerate -generate-manpage | nroff -Tutf8 -man > $(GOPATH)/man/man1/cligenerate.1
 	$(GOPATH)/bin/pkgassets -generate-manpage | nroff -Tutf8 -man > $(GOPATH)/man/man1/pkgassets.1
+	$(GOPATH)/bin/codemeta -generate-manpage | nroff -Tutf8 -man > $(GOPATH)/man/man1/codemeta.1
 
 
 dist/linux-amd64:
 	mkdir -p dist/bin
 	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
+	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/codemeta cmd/codemeta/codemeta.go
 	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
@@ -74,6 +80,7 @@ dist/linux-amd64:
 dist/windows-amd64:
 	mkdir -p dist/bin
 	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/cligenerate.exe cmd/cligenerate/cligenerate.go
+	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/codemeta.exe cmd/codemeta/codemeta.go
 	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/pkgassets.exe cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
@@ -81,6 +88,7 @@ dist/windows-amd64:
 dist/macosx-amd64:
 	mkdir -p dist/bin
 	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
+	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/codemeta cmd/codemeta/codemeta.go
 	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
@@ -88,6 +96,7 @@ dist/macosx-amd64:
 dist/raspbian-arm7:
 	mkdir -p dist/bin
 	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
+	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/codemeta cmd/codemeta/codemeta.go
 	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-amd7.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin

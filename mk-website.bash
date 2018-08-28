@@ -41,12 +41,13 @@ echo "Generating install.html"
 MakePage nav.md INSTALL.md install.html
 echo "Generating license.html"
 MakePage nav.md "markdown:$(cat LICENSE)" license.html
-echo "Generating docs/index.html"
-MakePage docs/nav.md docs/index.md docs/index.html
-echo "Generating docs/pkgassets.html"
-MakePage docs/nav.md docs/pkgassets.md docs/pkgassets.html
-echo "Generating docs/cligenerate.html"
-MakePage docs/nav.md docs/cligenerate.md docs/cligenerate.html
+
+# Generate docs section
+for ITEM in index pkgassets cligenerate codemeta; do
+    echo "Generating docs/${ITEM}.html"
+    MakePage docs/nav.md "docs/${ITEM}.md" "docs/${ITEM}.html"
+done
+
 echo "Generating examples/help.html"
 MakePage nav.md "examples/help.md" "examples/help.html"
 echo "Generating examples/htdocs.html"

@@ -80,7 +80,7 @@ func main() {
 	app.BoolVar(&showHelp, "h,help", false, "display help")
 	app.BoolVar(&showLicense, "l,license", false, "display license")
 	app.BoolVar(&showVersion, "v,version", false, "display version")
-	app.BoolVar(&showExamples, "e,examples", false, "display examples")
+	app.BoolVar(&showExamples, "examples", false, "display examples")
 	app.StringVar(&inputFName, "i,input", "", "input file name")
 	app.StringVar(&outputFName, "o,output", "", "output file name")
 	app.BoolVar(&newLine, "nl,newline", false, "if true add a trailing newline")
@@ -92,8 +92,9 @@ func main() {
 	// Application Options
 	//FIXME: Add any application specific options
 
-	// Action verbs (e.g. app.AddAction(STRING_VERB, FUNC_POINTER, STRING_DESCRIPTION)
+	// Application Verbs
 	//FIXME: If the application is verb based add your verbs here
+	//(e.g. app.NewVerb(STRING_VERB, STRING_DESCRIPTION, FUNC_POINTER)
 
 	// We're ready to process args
 	app.Parse()
@@ -137,11 +138,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	// FIXME: Application Option Parsing
-
-	// FIXME: Application running code, e.g.
-	// Run the app!
-	//os.Exit(app.Run(args))
+	// Application Logic
+	//FIXME: running code, e.g. os.Exit(app.Run(args))
 
 	if newLine {
 		fmt.Fprintln(app.Out, "")
@@ -183,7 +181,7 @@ func Generate(appName, synopsis, author, descriptionFName, examplesFName, bugsFN
 		}
 	}
 	if len(licenseFName) > 0 {
-		bugs, err = ioutil.ReadFile(licenseFName)
+		license, err = ioutil.ReadFile(licenseFName)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "WARNING: skipping license %q, %s", licenseFName, err)
 		}

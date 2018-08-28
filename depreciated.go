@@ -1,5 +1,6 @@
 /**
- * (depreciated code)
+ * (depreciated code) - this code will remain for a version or two
+ * as Caltech Library projects are updated.
  */
 package cli
 
@@ -8,7 +9,7 @@ import (
 	"io"
 )
 
-// Action describes an "action" that a cli might take. Actions aren't prefixed with a "-".
+// (depreciated in favor of Verb) Action describes an "action" that a cli might take. Actions aren't prefixed with a "-".
 type Action struct {
 	// Name is usually a verb like list, test, build as needed by the cli
 	Name string
