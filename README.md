@@ -1,6 +1,6 @@
 
 
-# package cli
+# cli: building better command line interfaces
 
 _cli_ is a Golang package intended to encourage a more consistant 
 command line user interface in programs written for Caltech Library
