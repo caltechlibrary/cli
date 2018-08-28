@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+<a href="http://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="index.html">README</a></li>
+<li><a href="license.html">LICENSE</a></li>
+<li><a href="install.html">INSTALL</a></li>
+<li><a href="https://github.com/caltechlibrary/pkgassets">Github</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>package cli</h1>
+
+<p><em>cli</em> is a Golang package intended to encourage a more consistant
+command line user interface in programs written for Caltech Library
+using Go.</p>
+
+<p>Features include:</p>
+
+<ul>
+<li>A common <code>Cli</code> object generated with <code>cli.NewCli()</code> representing configuration, environment and command line
+
+<ul>
+<li>environment and options share the same approach as Go&rsquo;s standard flag package</li>
+<li>options support multiple options (long/short version) in option&rsquo;s flag string separating options by comma</li>
+<li>generate help and usage, sysnopsis, options, examples, license based on programaticly</li>
+</ul></li>
+<li>A common <code>Create</code>, <code>Open</code> and <code>Close</code> file wrapper for integrating standard in/out/err as fallback</li>
+<li>The <code>Cli</code> object supports the following functions
+
+<ul>
+<li><code>AppName()</code> returns the compiled application name</li>
+<li><code>AddParams()</code> for documenting required and optional non-option parameters</li>
+<li><code>AddAction()</code> for verb style command lines, associates verb, func and doc string</li>
+<li><code>AddVerb()</code> for verb style command lines, associates verb and doc string</li>
+<li><code>AddFlagSet()</code> for associating flags with the command or verb</li>
+<li><code>AddHelp()</code> for adding help topics by page name</li>
+<li><code>Help()</code> string for searching your help topics by page name</li>
+<li><code>Usage() string</code> builds a page for show general help - synopsis, description, options and examples</li>
+<li><code>License() string</code> builds a license page as a string</li>
+<li><code>Version() string</code> builds a version string</li>
+<li><code>Run()</code> for running defined actions and returning an exit code suitable for passing to <code>os.Exit()</code></li>
+<li><code>GenerateMarkdownDocs()</code> for generating documentation based on how the program in implemented</li>
+<li><code>GenerateManPage()</code> for generating nroff man page documentation</li>
+</ul></li>
+</ul>
+
+<h2>Command line tools</h2>
+
+<p>Two command line tools come with the <a href="./">cli</a> package.</p>
+
+<ul>
+<li><a href="docs/cligenerate.html">cligenerate</a> - will generate a skelton command line program</li>
+<li><a href="docs/pkgassets.html">pkgassets</a> - will take Markdown docs and create a go program file where each doc&rsquo;s name is the key and contents are the byte array value representing the docs</li>
+</ul>
+
+</section>
+
+<footer>
+<span><h1><A href="http://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2018 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+</body>
+</html>
