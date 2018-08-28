@@ -56,31 +56,35 @@ clean:
 	if [ -d man ]; then rm -fR man; fi
 
 
-install: build
+install: build bootstrap
 	env GOBIN=$(GOPATH)/bin go install cmd/cligenerate/cligenerate.go
-	env GOBIN=$(GOPATH)/bin go install cmd/pkgassets/pkgassets.go
+	env GOBIN=$(GOPATH)/bin go install cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 
 
 dist/linux-amd64:
 	mkdir -p dist/bin
+	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
 	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/windows-amd64:
 	mkdir -p dist/bin
+	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/cligenerate.exe cmd/cligenerate/cligenerate.go
 	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/pkgassets.exe cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/macosx-amd64:
 	mkdir -p dist/bin
+	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
 	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/raspbian-arm7:
 	mkdir -p dist/bin
+	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
 	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go cmd/pkgassets/help.go cmd/pkgassets/examples.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-amd7.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
@@ -92,7 +96,7 @@ distribute_docs:
 	cp -v INSTALL.md dist/
 	./package-versions.bash > dist/package-versions.txt
 
-release: distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7
+release: bootstrap distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7
 
 website:
 	./mk-website.bash
