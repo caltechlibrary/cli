@@ -1,12 +1,12 @@
 {
     "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
     "@type": "SoftwareSourceCode",
-    "description": "A Go package for command line user interfaces including generating support documentation in Markdown and nroff",
+    "description": "A Go package and command line tools for creating more consistant command line user interfaces",
     "name": "cli",
     "codeRepository": "https://github.com/caltechlibrary/cli",
     "issueTracker": "https://github.com/caltechlibrary/cli/issues",
     "license": "https://data.caltech.edu/license",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "author": [
         {
             "@type": "Person",
@@ -21,7 +21,8 @@
     "downloadUrl": "https://github.com/caltechlibrary/cli/releases",
     "keywords": [
         "GitHub",
-        "cli"
+        "code-generation",
+        "assets"
     ],
     "maintainer": "https://orcid.org/0000-0003-0900-6903",
     "programmingLanguage": [

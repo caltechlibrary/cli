@@ -44,7 +44,7 @@ func isExcluded(fName string, fList []string) bool {
 }
 
 func main() {
-	app := cli.NewCli(pkgassets.Version)
+	app := cli.NewCli(cli.Version)
 	appName := app.AppName()
 
 	// Document non-option parameters
