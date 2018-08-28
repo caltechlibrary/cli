@@ -2,8 +2,9 @@
 
 # package cli
 
-_cli_ is a Golang package to encourage a more consistant command line user interface
-in programs written for Caltech Library.
+_cli_ is a Golang package intended to encourage a more consistant 
+command line user interface in programs written for Caltech Library
+using Go. 
 
 Features include:
 
@@ -26,4 +27,12 @@ Features include:
     + `Run()` for running defined actions and returning an exit code suitable for passing to `os.Exit()`
     + `GenerateMarkdownDocs()` for generating documentation based on how the program in implemented
     + `GenerateManPage()` for generating nroff man page documentation
+
+## Command line tools
+
+Two command line tools come with the [cli](./) package.
+
++ [cligenerate](docs/cligenerate.html) - will generate a skelton command line program
++ [pkgassets](docs/pkgassets.html) - will take Markdown docs and create a go program file where each doc's name is the key and contents are the byte array value representing the docs
+
 

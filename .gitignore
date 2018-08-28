@@ -5,3 +5,9 @@ bin/
 dist/
 testdata/
 man/
+bin/*
+dist/*
+*.zip
+*~
+.DS_Store
+*.swp
