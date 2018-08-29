@@ -503,7 +503,7 @@ func (c *Cli) Run(args []string) int {
 		fmt.Fprintf(c.Eout, "Nothing to do\n")
 		return 1
 	}
-	name, rest := ShiftArg(args)
+	name, restOfArgs := ShiftArg(args)
 	name = strings.TrimSpace(name)
 	verb, ok := c.verbs[name]
 	if ok == false {
@@ -511,12 +511,12 @@ func (c *Cli) Run(args []string) int {
 		// circuit this with an error response and value.
 		action, ok := c.actions[name]
 		if ok == false {
-			fmt.Fprintf(c.Eout, "do not known how to %q with %q\n", verb, rest)
+			fmt.Fprintf(c.Eout, "do not known how to %q\n", strings.Join(args, " "))
 			return 1
 		}
-		return action.Fn(c.In, c.Out, c.Eout, rest)
+		return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
 	}
-	return verb.Fn(c.In, c.Out, c.Eout, rest)
+	return verb.Fn(c.In, c.Out, c.Eout, restOfArgs)
 }
 
 func padRight(s, p string, maxWidth int) string {
