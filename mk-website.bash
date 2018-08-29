@@ -43,7 +43,7 @@ echo "Generating license.html"
 MakePage nav.md "markdown:$(cat LICENSE)" license.html
 
 # Generate docs section
-for ITEM in index pkgassets cligenerate codemeta; do
+for ITEM in index pkgassets cligenerate; do
     echo "Generating docs/${ITEM}.html"
     MakePage docs/nav.md "docs/${ITEM}.md" "docs/${ITEM}.html"
 done
