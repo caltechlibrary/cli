@@ -15,7 +15,7 @@ Features include:
 
 ## Command line tools
 
-Two command line tools come with the [cli](./) package.
+Two command line tools come with the _cli_ package.
 
 + [cligenerate](docs/cligenerate.html) - will generate a skelton command line program
 + [pkgassets](docs/pkgassets.html) - will take Markdown docs and create a go program file where each doc's name is the key and contents are the byte array value representing the docs
