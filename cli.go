@@ -511,7 +511,7 @@ func (c *Cli) Run(args []string) int {
 		// circuit this with an error response and value.
 		action, ok := c.actions[name]
 		if ok == false {
-			fmt.Fprintf(c.Eout, "do not known how to %q\n", strings.Join(args, " "))
+			fmt.Fprintf(c.Eout, "do not known how to %q\n", name)
 			return 1
 		}
 		return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
