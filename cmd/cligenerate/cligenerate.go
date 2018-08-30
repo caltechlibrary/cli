@@ -43,7 +43,8 @@ how to use the cli package.
 ` + "```" + `
     cligenerate -app=helloworld \
         -name="@author Jane Doe, <jane.doe@example.edu>" \
-        -decription="This is a demo cli" \
+        -synopsis="This is a demo cli" \
+		-use-description=README.md \
         -use-license=LICENSE
 ` + "```" + `
 
