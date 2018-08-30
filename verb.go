@@ -50,7 +50,7 @@ type Verb struct {
 	// Fn holds the main function associated with the verb, often is passed
 	// stdin, stdout and stnerror returns a value suitable for passing to
 	// os.Exit()
-	Fn func(io.Reader, io.Writer, io.Writer, []string) int
+	Fn func(io.Reader, io.Writer, io.Writer, []string, *flag.FlagSet) int
 
 	// FlagSet holds the parsable options associated with the verb.
 	FlagSet *flag.FlagSet
@@ -64,7 +64,7 @@ type Verb struct {
 // NewVerb creates an Verb instance, and describes the running of the
 // command line interface making it easy to expose the functionality
 // in packages as command line tools.
-func NewVerb(name, usage string, fn func(io.Reader, io.Writer, io.Writer, []string) int) *Verb {
+func NewVerb(name, usage string, fn func(io.Reader, io.Writer, io.Writer, []string, *flag.FlagSet) int) *Verb {
 	options := make(map[string]string)
 	documentation := make(map[string][]byte)
 	flagSet := flag.NewFlagSet(name, flag.ContinueOnError)

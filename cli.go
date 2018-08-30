@@ -476,13 +476,16 @@ func (c *Cli) AddParams(params ...string) {
 // command line interface. It supercedes AddVerb(),
 // and AddAction(). Verbs can have their own options and
 // documentation.
-func (c *Cli) NewVerb(name string, usage string, fn func(io.Reader, io.Writer, io.Writer, []string) int) *Verb {
-	verb := new(Verb)
-	verb.Name = name
-	verb.Usage = usage
-	if fn != nil {
-		verb.Fn = fn
-	}
+func (c *Cli) NewVerb(name string, usage string, fn func(io.Reader, io.Writer, io.Writer, []string, *flag.FlagSet) int) *Verb {
+	verb := NewVerb(name, usage, fn)
+	/*
+			verb := new(Verb)
+			verb.Name = name
+			verb.Usage = usage
+		if fn != nil {
+			verb.Fn = fn
+		}
+	*/
 	c.verbs[name] = verb
 	return verb
 }
@@ -516,7 +519,7 @@ func (c *Cli) Run(args []string) int {
 		}
 		return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
 	}
-	return verb.Fn(c.In, c.Out, c.Eout, restOfArgs)
+	return verb.Fn(c.In, c.Out, c.Eout, restOfArgs, verb.FlagSet)
 }
 
 func padRight(s, p string, maxWidth int) string {
