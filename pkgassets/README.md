@@ -8,7 +8,7 @@
 ```
 
 
-## Description
+## DESCRIPTION
 
 _pkgassets_ generates a Go source directory whos file assets are embedded in a `map[string][]byte` variable. 
 This is useful where you want to embed web content, template source code, help docs and other assets that 
@@ -39,7 +39,7 @@ key can be modified based on _pkgassets_'s command line options.
 	-version	display version
 
 
-## EXAMPLE
+## EXAMPLES
 
 ```
     pkgassets MAP_VARAIBLE_NAME NAME_OF_DIRECTORY_HOLDING_ASSETS

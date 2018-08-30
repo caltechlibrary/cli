@@ -5,9 +5,6 @@
 
 ## DESCRIPTION
 
-
-## Description
-
 _pkgassets_ generates a Go source directory whos file assets are embedded in a `map[string][]byte` variable. 
 This is useful where you want to embed web content, template source code, help docs and other assets that 
 can be used for default behavior in a Go command line program or service. 
@@ -45,8 +42,7 @@ Below are a set of options available.
 
 ## EXAMPLES
 
-
-## EXAMPLE
+Usage examples.
 
 ```
     pkgassets MAP_VARAIBLE_NAME NAME_OF_DIRECTORY_HOLDING_ASSETS
@@ -83,4 +79,4 @@ name will be the name of the package plus the ".go" extension.
 
 
 
-pkgassets v0.0.6
+pkgassets v0.0.15

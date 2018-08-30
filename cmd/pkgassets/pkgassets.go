@@ -15,6 +15,55 @@ import (
 )
 
 var (
+	synopsis = `
+_pkgassets_ generates Go code for mapping path to text assets
+`
+
+	description = `
+_pkgassets_ generates a Go source directory whos file assets are embedded in a ` + "`" + `map[string][]byte` + "`" + ` variable. 
+This is useful where you want to embed web content, template source code, help docs and other assets that 
+can be used for default behavior in a Go command line program or service. 
+
+The map content is harvested from directory holding the assets to be embedded. By default the
+path key starts with a slash and does not include the hosting directory (e.g. htdocs/index.html 
+would become /index.html if htdocs was used to harvest assets). The prefix and suffix on the
+key can be modified based on _pkgassets_'s command line options.
+`
+
+	examples = `
+` + "```" + `
+    pkgassets MAP_VARAIBLE_NAME NAME_OF_DIRECTORY_HOLDING_ASSETS
+` + "```" + `
+
+This will result in a Go of type map[string][]byte holding the assets discovered by walking the directory
+tree provided. The map's key will represent a path (beginning with "/") pointing at the asset ingested.
+
+` + "```shell" + `
+    pkgassets DefaultSite htdocs
+` + "```" + `
+
+Assuming that _htdocs_ held
+
++ index.html
++ css/site.css
+
+In this example the htdocs directory will be crawled and all the files found harvested as a an asset. The
+path in the map will not include htdocs and would result in a Go source file like
+
+` + "```golang" + `
+    package defaultsite
+
+    var DefaultSite = map[string][]byte{
+        "/index.html": []byte{}, // ... the contents of index.html would be here ...
+        "/css/site.css": []byte{}, // ... the contents of css/site.css would be here ...
+    }
+` + "```" + `
+
+If a package name is not provided then the package name will a lowercase name of the map variable name (e.g. 
+"var DefaultSite" becomes "package defaultsite"). Likewise if a output name is not provided then the file
+name will be the name of the package plus the ".go" extension.
+`
+
 	// Standard Options
 	showHelp         bool
 	showLicense      bool
@@ -52,8 +101,9 @@ func main() {
 
 	// Add Help Docs
 	app.AddHelp("license", []byte(fmt.Sprintf(pkgassets.LicenseText, appName, pkgassets.Version)))
-	app.AddHelp("description", []byte(fmt.Sprintf("%s", Help["description"])))
-	app.AddHelp("examples", []byte(fmt.Sprintf("%s", Help["example"])))
+	app.AddHelp("synopsis", []byte(synopsis))
+	app.AddHelp("description", []byte(description))
+	app.AddHelp("examples", []byte(examples))
 
 	// Standard Options
 	app.BoolVar(&showHelp, "h,help", false, "display help")
@@ -74,14 +124,6 @@ func main() {
 	app.StringVar(&stripSuffix, "strip-suffix", "", "strip the suffix from the map key")
 	app.StringVar(&requiredExt, "ext", "", "Only include files with matching extension")
 	app.StringVar(&excludeFNames, "X,exclude", "", "A colon separted list of filenames to exclude, (e.g. 'nav.md:topics.md')")
-
-	// map in our help and examples
-	for k, v := range Help {
-		app.AddHelp(k, v)
-	}
-	for k, v := range Examples {
-		app.AddHelp("example-"+k, v)
-	}
 
 	app.Parse()
 	args := app.Args()
