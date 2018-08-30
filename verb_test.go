@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"flag"
 	"io"
 	"testing"
 )
@@ -8,7 +9,7 @@ import (
 func TestVerb(t *testing.T) {
 	vName := "TestVerb"
 	vUsage := "test verb"
-	fn := func(in io.Reader, out io.Writer, eout io.Writer, args []string) int {
+	fn := func(in io.Reader, out io.Writer, eout io.Writer, args []string, flagSet *flag.FlagSet) int {
 		out.Write([]byte("Hello World!"))
 		return 0
 	}
