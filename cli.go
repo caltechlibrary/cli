@@ -497,7 +497,7 @@ func (c *Cli) Verbs() map[string]string {
 
 // (c *Cli) Run takes a list of non-option arguments and runs them if the fist arg (i.e. arg[0]
 // has a corresponding action. Returns an int suitable to passing to os.Exit()
-func (c *Cli) Run(args []string) int {
+func (c *Cli) Run(in io.Reader, out io.Writer, eout io.Writer, args []string) int {
 	if len(args) == 0 {
 		fmt.Fprintf(c.Eout, "Nothing to do\n")
 		return 1
@@ -513,9 +513,9 @@ func (c *Cli) Run(args []string) int {
 			fmt.Fprintf(c.Eout, "do not known how to %q\n", name)
 			return 1
 		}
-		return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
+		return action.Fn(in, out, eout, restOfArgs)
 	}
-	return verb.Fn(c.In, c.Out, c.Eout, restOfArgs, verb.FlagSet)
+	return verb.Fn(in, out, eout, restOfArgs, verb.FlagSet)
 }
 
 func padRight(s, p string, maxWidth int) string {
