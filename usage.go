@@ -4,6 +4,7 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"sort"
@@ -53,9 +54,10 @@ func (c *Cli) Usage(w io.Writer) {
 	fmt.Fprintf(w, "\nUSAGE: %s\n\n", strings.Join(parts, " "))
 
 	if section, ok := c.Documentation["synopsis"]; ok == true {
-		fmt.Fprintf(w, "SYNOPSIS\n\n%s\n\n", section)
-	} else if section, ok := c.Documentation["description"]; ok == true {
-		fmt.Fprintf(w, "DESCRIPTION\n\n%s\n\n", section)
+		fmt.Fprintf(w, "SYNOPSIS\n\n%s\n\n", bytes.TrimSpace(section))
+	}
+	if section, ok := c.Documentation["description"]; ok == true {
+		fmt.Fprintf(w, "DESCRIPTION\n\n%s\n\n", bytes.TrimSpace(section))
 	}
 
 	if len(c.env) > 0 {
@@ -134,16 +136,17 @@ func (c *Cli) Usage(w io.Writer) {
 		for _, k := range keys {
 			usage := c.verbs[k].Usage
 			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
-			if len(c.verbs[k].params) > 0 && len(c.verbs[k].params) == 0 {
-				fmt.Fprintf(w, "    %s  syntax: %s %s %s\n", padRight("", " ", padding), c.appName, k, strings.Join(c.verbs[k].params, " "))
-			}
-			if len(c.verbs[k].params) > 0 && len(c.verbs[k].params) > 0 {
-				fmt.Fprintf(w, "    %s  syntax: %s %s [VERB OPTIONS] %s\n", padRight("", " ", padding), c.appName, k, strings.Join(c.verbs[k].params, " "))
+			if len(c.verbs[k].params) > 0 {
+				if len(c.verbs[k].options) == 0 {
+					fmt.Fprintf(w, "    %s   `%s %s %s`\n", padRight("", " ", padding), c.appName, k, strings.Join(c.verbs[k].params, " "))
+				} else {
+					fmt.Fprintf(w, "    %s   `%s %s [VERB OPTIONS] %s`\n", padRight("", " ", padding), c.appName, k, strings.Join(c.verbs[k].params, " "))
+				}
 			}
 			if len(c.verbs[k].options) > 0 {
-				fmt.Fprintf(w, "    %s  options:\n", padRight("", " ", padding))
+				fmt.Fprintf(w, "    %s  verb options:\n", padRight("", " ", padding))
 				for op, desc := range c.verbs[k].options {
-					fmt.Fprintf(w, "    %s  %s - %s\n", padRight("", " ", padding), op, desc)
+					fmt.Fprintf(w, "    %s  %s     %s\n", padRight("", " ", padding), padRight(op, " ", padding), desc)
 				}
 			}
 			fmt.Fprintf(w, "\n")
@@ -152,11 +155,11 @@ func (c *Cli) Usage(w io.Writer) {
 	}
 
 	if section, ok := c.Documentation["examples"]; ok == true {
-		fmt.Fprintf(w, "EXAMPLES\n\n%s\n\n", section)
+		fmt.Fprintf(w, "EXAMPLES\n\n%s\n\n", bytes.TrimSpace(section))
 	}
 
 	if section, ok := c.Documentation["bugs"]; ok == true {
-		fmt.Fprintf(w, "BUGS\n\n%s\n\n", section)
+		fmt.Fprintf(w, "BUGS\n\n%s\n\n", bytes.TrimSpace(section))
 	}
 
 	if len(c.Documentation) > 0 {
