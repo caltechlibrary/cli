@@ -468,9 +468,9 @@ func (c *Cli) NArg() int {
 	return flag.NArg()
 }
 
-// Add Params generates explicit documentation for expected parameters
+// Set Params generates explicit documentation for expected parameters
 // instead of using those defined by verbs and actions.
-func (c *Cli) AddParams(params ...string) {
+func (c *Cli) SetParams(params ...string) {
 	for _, param := range params {
 		c.params = append(c.params, param)
 	}

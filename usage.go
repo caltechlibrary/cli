@@ -142,6 +142,10 @@ func (c *Cli) Usage(w io.Writer) {
 		fmt.Fprintf(w, "EXAMPLES\n\n%s\n\n", section)
 	}
 
+	if section, ok := c.Documentation["bugs"]; ok == true {
+		fmt.Fprintf(w, "BUGS\n\n%s\n\n", section)
+	}
+
 	if len(c.Documentation) > 0 {
 		keys := []string{}
 		for k, _ := range c.actions {

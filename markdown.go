@@ -15,10 +15,10 @@ import (
 func (c *Cli) GenerateMarkdown(w io.Writer) {
 	var parts []string
 	parts = append(parts, c.appName)
+
 	if len(c.options) > 0 {
 		parts = append(parts, "[OPTIONS]")
 	}
-
 	// NOTE: setup explicit parameter documentation
 	if len(c.params) > 0 {
 		parts = append(parts, c.params...)
@@ -50,8 +50,6 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 		} else {
 			parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
 		}
-	} else if len(c.params) > 0 {
-		parts = append(parts, c.params...)
 	}
 	fmt.Fprintf(w, "\n# USAGE\n\n	%s\n\n", strings.Join(parts, " "))
 

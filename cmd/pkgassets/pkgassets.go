@@ -97,7 +97,7 @@ func main() {
 	appName := app.AppName()
 
 	// Document non-option parameters
-	app.AddParams("VARIABLE_NAME", "DIR_HOLDING_ASSETS", "[VARIABLE_NAME DIR_HOLDING_ASSETS ...]")
+	app.SetParams("VARIABLE_NAME", "DIR_HOLDING_ASSETS", "[VARIABLE_NAME DIR_HOLDING_ASSETS ...]")
 
 	// Add Help Docs
 	app.AddHelp("license", []byte(fmt.Sprintf(pkgassets.LicenseText, appName, pkgassets.Version)))

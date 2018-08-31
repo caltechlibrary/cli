@@ -69,6 +69,9 @@ func main() {
 	//FIXME: if you need the app name then...
 	//appName := app.AppName()
 
+	// Set explicit parameter list for USAGE
+	//app.SetParams(ARRAY_OF_OPTIONAL_AND_REQUIRE_PARAMETERS...)
+
 	// Add Help Docs
 	app.SectionNo = 1 // The manual page section number
 	app.AddHelp("synopsis", []byte(synopsis))
