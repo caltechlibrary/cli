@@ -19,10 +19,32 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 		parts = append(parts, "[OPTIONS]")
 	}
 
-	if len(c.actions) > 0 {
-		if len(c.params) > 0 {
-			parts = append(parts, c.params...)
+	// NOTE: setup explicit parameter documentation
+	if len(c.params) > 0 {
+		parts = append(parts, c.params...)
+	}
+	if len(c.verbs) > 0 && len(c.params) == 0 {
+		if c.VerbsRequired {
+			parts = append(parts, "VERB")
+		} else {
+			parts = append(parts, "[VERB]")
 		}
+		// Check for verb options...
+		for _, verb := range c.verbs {
+			if len(verb.options) > 0 {
+				parts = append(parts, "[VERB OPTIONS]")
+				break
+			}
+		}
+		// Check for verb params
+		for _, verb := range c.verbs {
+			if len(verb.params) > 0 {
+				parts = append(parts, "[VERB PARAMETERS...]")
+				break
+			}
+		}
+	}
+	if len(c.actions) > 0 && len(c.params) == 0 {
 		if c.ActionsRequired {
 			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
 		} else {

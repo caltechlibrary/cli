@@ -28,10 +28,20 @@ func (c *Cli) Usage(w io.Writer) {
 		} else {
 			parts = append(parts, "[VERB]")
 		}
-		if len(c.options) > 0 {
-			parts = append(parts, "[VERB OPTIONS]")
+		// Check for verb options...
+		for _, verb := range c.verbs {
+			if len(verb.options) > 0 {
+				parts = append(parts, "[VERB OPTIONS]")
+				break
+			}
 		}
-		parts = append(parts, "[VERB PARAMETERS...]")
+		// Check for verb params
+		for _, verb := range c.verbs {
+			if len(verb.params) > 0 {
+				parts = append(parts, "[VERB PARAMETERS...]")
+				break
+			}
+		}
 	}
 	if len(c.actions) > 0 && len(c.params) == 0 {
 		if c.ActionsRequired {
