@@ -262,8 +262,8 @@ func (c *Cli) AddHelp(keyword string, usage []byte) error {
 }
 
 // Help returns documentation on a topic. If first looks in
-// Documentation map and if nothing found looks in Synopsis map
-// and if not there return an empty string not documented string.
+// Documentation map and and if not there return a
+// not documented string.
 func (c *Cli) Help(keywords ...string) string {
 	var sections []string
 
