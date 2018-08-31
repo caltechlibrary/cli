@@ -122,7 +122,14 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 	if len(c.Documentation) > 0 {
 		keys := []string{}
 		for k, _ := range c.actions {
-			if k != "synopsis" && k != "description" && k != "examples" && k != "index" {
+			if _, hasVerb := c.verbs[k]; hasVerb == false {
+				if _, hasDocs := c.Documentation[k]; hasDocs == true {
+					keys = append(keys, k)
+				}
+			}
+		}
+		for k, _ := range c.verbs {
+			if _, hasDocs := c.Documentation[k]; hasDocs == true {
 				keys = append(keys, k)
 			}
 		}

@@ -219,6 +219,14 @@ func (v *Verb) DurationVar(p *time.Duration, names string, value time.Duration, 
 	}
 }
 
+// HasOptions returns true if len(v.options) > 0, false otherwise
+func (v *Verb) HasOptions() bool {
+	if v.options == nil || len(v.options) == 0 {
+		return false
+	}
+	return true
+}
+
 // Option returns an option's document string or unsupported string
 func (v *Verb) Option(op string) string {
 	op = strings.Trim(op, " ")

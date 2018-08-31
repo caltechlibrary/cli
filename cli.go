@@ -180,6 +180,9 @@ type Cli struct {
 	// ActionsRequired is true then the USAGE line shows ACTION rather than [ACTION]
 	ActionsRequired bool
 
+	// VerbsRequired is true then USAGE line shows VERB rather than [VERB]
+	VerbsRequired bool
+
 	// application name based on os.Args[0]
 	appName string
 	// application version based on string passed in New
@@ -465,7 +468,8 @@ func (c *Cli) NArg() int {
 	return flag.NArg()
 }
 
-// Add Params documents any parameters not defined as Options, Verbs or Actions, it is an orders list of strings
+// Add Params generates explicit documentation for expected parameters
+// instead of using those defined by verbs and actions.
 func (c *Cli) AddParams(params ...string) {
 	for _, param := range params {
 		c.params = append(c.params, param)
@@ -478,14 +482,6 @@ func (c *Cli) AddParams(params ...string) {
 // documentation.
 func (c *Cli) NewVerb(name string, usage string, fn func(io.Reader, io.Writer, io.Writer, []string, *flag.FlagSet) int) *Verb {
 	verb := NewVerb(name, usage, fn)
-	/*
-			verb := new(Verb)
-			verb.Name = name
-			verb.Usage = usage
-		if fn != nil {
-			verb.Fn = fn
-		}
-	*/
 	c.verbs[name] = verb
 	return verb
 }

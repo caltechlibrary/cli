@@ -93,8 +93,11 @@ func main() {
 	//FIXME: Add any application specific options
 
 	// Application Verbs
-	//FIXME: If the application is verb based add your verbs here
-	//(e.g. app.NewVerb(STRING_VERB, STRING_DESCRIPTION, FUNC_POINTER)
+	//FIXME: If the application is verb based add your verbs here e.g. 
+	//app.VerbsRequired = true
+	//verbObj := app.NewVerb(STRING_VERB, STRING_DESCRIPTION, FUNC_POINTER)
+	//verbObj.StringVar(&inputFName, "i,input", "", "input filename")
+	// ...
 
 	// We're ready to process args
 	app.Parse()
