@@ -134,6 +134,19 @@ func (c *Cli) Usage(w io.Writer) {
 		for _, k := range keys {
 			usage := c.verbs[k].Usage
 			fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
+			if len(c.verbs[k].params) > 0 && len(c.verbs[k].params) == 0 {
+				fmt.Fprintf(w, "    %s  syntax: %s %s %s\n", padRight("", " ", padding), c.appName, k, strings.Join(c.verbs[k].params, " "))
+			}
+			if len(c.verbs[k].params) > 0 && len(c.verbs[k].params) > 0 {
+				fmt.Fprintf(w, "    %s  syntax: %s %s [VERB OPTIONS] %s\n", padRight("", " ", padding), c.appName, k, strings.Join(c.verbs[k].params, " "))
+			}
+			if len(c.verbs[k].options) > 0 {
+				fmt.Fprintf(w, "    %s  options:\n", padRight("", " ", padding))
+				for op, desc := range c.verbs[k].options {
+					fmt.Fprintf(w, "    %s  %s - %s\n", padRight("", " ", padding), op, desc)
+				}
+			}
+			fmt.Fprintf(w, "\n")
 		}
 		fmt.Fprintf(w, "\n\n")
 	}
