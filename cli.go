@@ -502,15 +502,15 @@ func (c *Cli) Run(args []string) int {
 		fmt.Fprintf(c.Eout, "Nothing to do\n")
 		return 1
 	}
-	name, restOfArgs := ShiftArg(args)
-	name = strings.TrimSpace(name)
-	verb, ok := c.verbs[name]
+	key, restOfArgs := ShiftArg(args)
+	key = strings.TrimSpace(key)
+	verb, ok := c.verbs[key]
 	if ok == false {
 		//NOTE: when Action is depreciated fully, we can short
 		// circuit this with an error response and value.
-		action, ok := c.actions[name]
+		action, ok := c.actions[key]
 		if ok == false {
-			fmt.Fprintf(c.Eout, "do not known how to %q\n", name)
+			fmt.Fprintf(c.Eout, "do not known how to %q\n", key)
 			return 1
 		}
 		return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
