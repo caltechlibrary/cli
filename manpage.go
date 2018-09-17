@@ -155,13 +155,15 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 			}
 		}
 	}
-	if len(c.actions) > 0 && len(c.params) == 0 {
-		if c.ActionsRequired {
-			parts = append(parts, "ACTION [ACTION PARAMETERS...]")
-		} else {
-			parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
+	/*
+		if len(c.actions) > 0 && len(c.params) == 0 {
+			if c.ActionsRequired {
+				parts = append(parts, "ACTION [ACTION PARAMETERS...]")
+			} else {
+				parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
+			}
 		}
-	}
+	*/
 
 	// .SH USAGE
 	fmt.Fprintf(w, ".SH USAGE\n%s\n", strings.Join(parts, " "))
@@ -181,9 +183,11 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		if len(c.env) > 0 {
 			parts = append(parts, ".TP\nOptions will override any corresponding environment settings.\n")
 		}
-		if len(c.actions) > 0 {
-			parts = append(parts, ".TP\nOptions are shared between all actions and must precede the action on the command line.\n")
-		}
+		/*
+			if len(c.actions) > 0 {
+				parts = append(parts, ".TP\nOptions are shared between all actions and must precede the action on the command line.\n")
+			}
+		*/
 		if len(parts) > 0 {
 			fmt.Fprintf(w, "%s", strings.Join(parts, "\n"))
 		}
@@ -199,20 +203,22 @@ func (c *Cli) GenerateManPage(w io.Writer) {
 		}
 	}
 
-	if len(c.actions) > 0 {
-		fmt.Fprintf(w, "\n.SS ACTIONS\n")
-		keys := []string{}
-		for k, _ := range c.actions {
-			keys = append(keys, k)
+	/*
+		if len(c.actions) > 0 {
+			fmt.Fprintf(w, "\n.SS ACTIONS\n")
+			keys := []string{}
+			for k, _ := range c.actions {
+				keys = append(keys, k)
+			}
+			fmt.Fprintf(w, ".TP\nThe following actions are supported.\n")
+			// Sort the keys alphabetically and display output
+			sort.Strings(keys)
+			for _, k := range keys {
+				usage := c.Action(k)
+				fmt.Fprintf(w, ".TP\n\\fB%s\\fP\n%s\n", k, usage)
+			}
 		}
-		fmt.Fprintf(w, ".TP\nThe following actions are supported.\n")
-		// Sort the keys alphabetically and display output
-		sort.Strings(keys)
-		for _, k := range keys {
-			usage := c.Action(k)
-			fmt.Fprintf(w, ".TP\n\\fB%s\\fP\n%s\n", k, usage)
-		}
-	}
+	*/
 
 	if len(c.env) > 0 {
 		fmt.Fprintf(w, "\n.SS ENVIRONMENT\n")

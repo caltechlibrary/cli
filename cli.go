@@ -52,7 +52,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `
 )
 
-// v0.0.15 merged pkgassets package as subpackage to cli.
+// v0.0.15 merged pkgassets package as subpackage to cli. Removed support for "Actions" replaced by "Verbs".
 //
 // v0.0.14 removes depreciated pre-v0.0.5 code, adds more flexible
 // Verb metaphor to replace Actions. Supports adding options to
@@ -177,8 +177,10 @@ type Cli struct {
 	// SectionNo is the numeric value section value for man page generation
 	SectionNo int
 
-	// ActionsRequired is true then the USAGE line shows ACTION rather than [ACTION]
-	ActionsRequired bool
+	/*
+		// ActionsRequired is true then the USAGE line shows ACTION rather than [ACTION]
+		ActionsRequired bool
+	*/
 
 	// VerbsRequired is true then USAGE line shows VERB rather than [VERB]
 	VerbsRequired bool
@@ -194,9 +196,11 @@ type Cli struct {
 	// description of short/long options and their doc strings
 	options map[string]string
 
-	// (depreciated) non-flag options, e.g. in the command line "go test", "test" would be the action string.
-	// Any additional parameters would be handed of the associated Action.
-	actions map[string]*Action
+	/*
+		// (depreciated) non-flag options, e.g. in the command line "go test", "test" would be the action string.
+		// Any additional parameters would be handed of the associated Action.
+		actions map[string]*Action
+	*/
 
 	// non-flag options, e.g. in the command line "go test", "test"
 	// would be the verb string.  Additional options and parameters can be
@@ -210,8 +214,10 @@ func NewCli(version string) *Cli {
 	appName := path.Base(os.Args[0])
 	env := make(map[string]*EnvAttribute)
 	options := make(map[string]string)
-	//NOTE: actions is depreciated
-	actions := make(map[string]*Action)
+	/*
+		//NOTE: actions is depreciated
+		actions := make(map[string]*Action)
+	*/
 	//NOTE: verbs will eventually replace actions
 	verbs := make(map[string]*Verb)
 	documentation := make(map[string][]byte)
@@ -227,8 +233,10 @@ func NewCli(version string) *Cli {
 		env:           env,
 		params:        []string{},
 		options:       options,
-		actions:       actions,
-		verbs:         verbs,
+		/*
+			actions:       actions,
+		*/
+		verbs: verbs,
 	}
 }
 
@@ -245,10 +253,12 @@ func (c *Cli) Verb(args []string) string {
 		if _, ok = c.verbs[verb]; ok == true {
 			return verb
 		}
-		//NOTE: we check actions as fallback for now ...
-		if _, ok = c.actions[verb]; ok == true {
-			return verb
-		}
+		/*
+			//NOTE: we check actions as fallback for now ...
+			if _, ok = c.actions[verb]; ok == true {
+				return verb
+			}
+		*/
 	}
 	return ""
 }
@@ -506,14 +516,16 @@ func (c *Cli) Run(args []string) int {
 	key = strings.TrimSpace(key)
 	verb, ok := c.verbs[key]
 	if ok == false {
-		//NOTE: when Action is depreciated fully, we can short
-		// circuit this with an error response and value.
-		action, ok := c.actions[key]
-		if ok == false {
-			fmt.Fprintf(c.Eout, "do not known how to %q\n", key)
-			return 1
-		}
-		return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
+		/*
+			//NOTE: when Action is depreciated fully, we can short
+			// circuit this with an error response and value.
+			if action, ok := c.actions[key]; ok == true {
+				return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
+
+			}
+		*/
+		fmt.Fprintf(c.Eout, "do not known how to %q\n", key)
+		return 1
 	}
 	return verb.Fn(c.In, c.Out, c.Eout, restOfArgs, verb.FlagSet)
 }
