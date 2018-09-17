@@ -44,15 +44,6 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 			}
 		}
 	}
-	/*
-		if len(c.actions) > 0 && len(c.params) == 0 {
-			if c.ActionsRequired {
-				parts = append(parts, "ACTION [ACTION PARAMETERS...]")
-			} else {
-				parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
-			}
-		}
-	*/
 	fmt.Fprintf(w, "\n# USAGE\n\n	%s\n\n", strings.Join(parts, " "))
 
 	if section, ok := c.Documentation["synopsis"]; ok == true {
@@ -92,11 +83,6 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 		if len(c.env) > 0 {
 			parts = append(parts, "Options will override any corresponding environment settings.")
 		}
-		/*
-			if len(c.actions) > 0 {
-				parts = append(parts, "Options are shared between all actions and must precede the action on the command line.")
-			}
-		*/
 		if len(parts) > 0 {
 			fmt.Fprintf(w, "%s\n\n", strings.Join(parts, " "))
 		}
@@ -118,44 +104,12 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 		fmt.Fprintf(w, "\n\n")
 	}
 
-	/*
-		if len(c.actions) > 0 {
-			fmt.Fprintf(w, "## ACTIONS\n\n")
-			keys := []string{}
-			padding := 0
-			for k, _ := range c.actions {
-				keys = append(keys, k)
-				if len(k) > padding {
-					padding = len(k) + 1
-				}
-			}
-			// Sort the keys alphabetically and display output
-			sort.Strings(keys)
-			fmt.Fprintf(w, "```\n")
-			for _, k := range keys {
-				usage := c.Action(k)
-				fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
-			}
-			fmt.Fprintf(w, "```\n")
-			fmt.Fprintf(w, "\n\n")
-		}
-	*/
-
 	if section, ok := c.Documentation["examples"]; ok == true {
 		fmt.Fprintf(w, "## EXAMPLES\n\n%s\n\n", section)
 	}
 
 	if len(c.Documentation) > 0 {
 		keys := []string{}
-		/*
-			for k, _ := range c.actions {
-				if _, hasVerb := c.verbs[k]; hasVerb == false {
-					if _, hasDocs := c.Documentation[k]; hasDocs == true {
-						keys = append(keys, k)
-					}
-				}
-			}
-		*/
 		for k, _ := range c.verbs {
 			if _, hasDocs := c.Documentation[k]; hasDocs == true {
 				keys = append(keys, k)

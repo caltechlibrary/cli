@@ -44,15 +44,6 @@ func (c *Cli) Usage(w io.Writer) {
 			}
 		}
 	}
-	/*
-		if len(c.actions) > 0 && len(c.params) == 0 {
-			if c.ActionsRequired {
-				parts = append(parts, "ACTION [ACTION PARAMETERS...]")
-			} else {
-				parts = append(parts, "[ACTION] [ACTION PARAMETERS...]")
-			}
-		}
-	*/
 	fmt.Fprintf(w, "\nUSAGE: %s\n\n", strings.Join(parts, " "))
 
 	if section, ok := c.Documentation["synopsis"]; ok == true {
@@ -104,27 +95,6 @@ func (c *Cli) Usage(w io.Writer) {
 		fmt.Fprintf(w, "\n\n")
 	}
 
-	/*
-		if len(c.actions) > 0 {
-			fmt.Fprintf(w, "ACTIONS\n\n")
-			keys := []string{}
-			padding := 0
-			for k, _ := range c.actions {
-				keys = append(keys, k)
-				if len(k) > padding {
-					padding = len(k) + 1
-				}
-			}
-			// Sort the keys alphabetically and display output
-			sort.Strings(keys)
-			for _, k := range keys {
-				usage := c.Action(k)
-				fmt.Fprintf(w, "    %s  %s\n", padRight(k, " ", padding), usage)
-			}
-			fmt.Fprintf(w, "\n\n")
-		}
-	*/
-
 	if len(c.verbs) > 0 {
 		fmt.Fprintf(w, "VERBS\n\n")
 		keys := []string{}
@@ -168,16 +138,6 @@ func (c *Cli) Usage(w io.Writer) {
 
 	if len(c.Documentation) > 0 {
 		keys := []string{}
-		/*
-			for k, _ := range c.actions {
-				// NOTE: only add key if we're not going to add it for verbs...
-				if _, hasKey := c.verbs[k]; hasKey == false {
-					if _, hasDoc := c.Documentation[k]; hasDoc == true {
-						keys = append(keys, k)
-					}
-				}
-			}
-		*/
 		for k, _ := range c.verbs {
 			if _, hasDoc := c.Documentation[k]; hasDoc == true {
 				keys = append(keys, k)

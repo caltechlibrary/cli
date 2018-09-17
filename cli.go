@@ -253,12 +253,6 @@ func (c *Cli) Verb(args []string) string {
 		if _, ok = c.verbs[verb]; ok == true {
 			return verb
 		}
-		/*
-			//NOTE: we check actions as fallback for now ...
-			if _, ok = c.actions[verb]; ok == true {
-				return verb
-			}
-		*/
 	}
 	return ""
 }
@@ -516,14 +510,6 @@ func (c *Cli) Run(args []string) int {
 	key = strings.TrimSpace(key)
 	verb, ok := c.verbs[key]
 	if ok == false {
-		/*
-			//NOTE: when Action is depreciated fully, we can short
-			// circuit this with an error response and value.
-			if action, ok := c.actions[key]; ok == true {
-				return action.Fn(c.In, c.Out, c.Eout, restOfArgs)
-
-			}
-		*/
 		fmt.Fprintf(c.Eout, "do not known how to %q\n", key)
 		return 1
 	}
