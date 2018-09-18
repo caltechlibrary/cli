@@ -276,6 +276,12 @@ func (c *Cli) Help(keywords ...string) string {
 
 	for _, keyword := range keywords {
 		if description, ok := c.Documentation[keyword]; ok == false {
+			//FIXME: see if there is a documented verb...
+			if verb, ok := c.verbs[keyword]; ok == true {
+				description := verb.Help(keywords[1:]...)
+				sections = append(sections, fmt.Sprintf("%s\n", description))
+				continue
+			}
 			sections = append(sections, fmt.Sprintf("%q not documented", keyword))
 			continue
 		} else {

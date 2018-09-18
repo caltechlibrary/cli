@@ -24,6 +24,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 	"time"
 )
@@ -97,12 +98,42 @@ func (v *Verb) AddHelp(keyword string, usage []byte) error {
 func (v *Verb) Help(keywords ...string) string {
 	var sections []string
 
-	for _, keyword := range keywords {
-		if description, ok := v.Documentation[keyword]; ok == false {
-			sections = append(sections, fmt.Sprintf("%q not documented", keyword))
-			continue
-		} else {
-			sections = append(sections, fmt.Sprintf("%s\n\n%s", strings.ToUpper(keyword), description))
+	if len(keywords) == 0 {
+		if len(v.params) > 0 {
+			sections = append(sections, fmt.Sprintf("VERB\n\n%s", v.Name))
+			sections = append(sections, fmt.Sprintf("    %s %s", v.Name, strings.Join(v.params, " ")))
+			if len(v.Usage) != 0 {
+				sections = append(sections, v.Usage)
+			}
+			if len(v.options) > 0 {
+				keys := []string{}
+				for key, _ := range v.options {
+					keys = append(keys, key)
+				}
+				sort.Strings(keys)
+				block := []string{"OPTIONS\n"}
+				for _, key := range keys {
+					block = append(block, fmt.Sprintf("    %s  %s", key, v.options[key]))
+				}
+				sections = append(sections, strings.Join(block, "\n"))
+			}
+			if len(v.Documentation) > 0 {
+				block := []string{"DESCRIPTION\n"}
+				for keyword, text := range v.Documentation {
+					block = append(block, fmt.Sprintf("%s\n   %s", keyword, text))
+				}
+				sections = append(sections, strings.Join(block, "\n"))
+			}
+			sections = append(sections, "")
+		}
+	} else {
+		for _, keyword := range keywords {
+			if description, ok := v.Documentation[keyword]; ok == false {
+				sections = append(sections, fmt.Sprintf("%q not documented", keyword))
+				continue
+			} else {
+				sections = append(sections, fmt.Sprintf("%s\n\n%s", strings.ToUpper(keyword), description))
+			}
 		}
 	}
 	return strings.Join(sections, "\n\n")
