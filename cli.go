@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	Version = `v0.0.15`
+	Version = `v0.0.16`
 
 	LicenseText = `
 %s %s
@@ -52,6 +52,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `
 )
 
+//
+// v0.0.16 Verb.AddParams() was renamed Verb.SetParams()
+//
 // v0.0.15 merged pkgassets package as subpackage to cli. Removed support for "Actions" replaced by "Verbs".
 //
 // v0.0.14 removes depreciated pre-v0.0.5 code, adds more flexible
