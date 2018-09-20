@@ -8,10 +8,11 @@
 
 ## Next
 
-+ [ ] Add support for attaching `*flag.FlagSet` verb or cli
-+ [ ] Add support for generating a `*flag.FlagSet` with [DATASET]Var() funcs
++ [ ] Verb.AddParams() should be Verb.SetParams() to match App's symantics
++ [x] Add support for attaching `*flag.FlagSet` verb or cli
++ [x] Add support for generating a `*flag.FlagSet` with [DATASET]Var() funcs
 + [ ] Update Makefile to match current practice (.e.g. website, assets, etc)
-+ [ ] Merge pkgassets package into cli package.
++ [x] Merge pkgassets package into cli package.
 + [ ] Need to word wrap output of cli help, usage, etc. based on console width and height (via man support if running under Unix/Linux/Posix)
 
 ## Someday, Maybe
