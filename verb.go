@@ -294,8 +294,9 @@ func (v *Verb) NArg() int {
 	return v.FlagSet.NArg()
 }
 
-// Add Params documents any parameters not defined as Options or Actions, it is an orders list of strings
-func (v *Verb) AddParams(params ...string) {
+// SetParams documents any parameters not defined as Options,
+// it is an orders list of strings
+func (v *Verb) SetParams(params ...string) {
 	for _, param := range params {
 		v.params = append(v.params, param)
 	}
