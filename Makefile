@@ -46,8 +46,6 @@ install: build
 	env GOBIN=$(GOPATH)/bin go install cmd/cligenerate/cligenerate.go
 	env GOBIN=$(GOPATH)/bin go install cmd/pkgassets/pkgassets.go
 	mkdir -p $(GOPATH)/man/man1
-	$(GOPATH)/bin/cligenerate -generate-manpage | nroff -Tutf8 -man > $(GOPATH)/man/man1/cligenerate.1
-	$(GOPATH)/bin/pkgassets -generate-manpage | nroff -Tutf8 -man > $(GOPATH)/man/man1/pkgassets.1
 
 
 dist/linux-amd64:
