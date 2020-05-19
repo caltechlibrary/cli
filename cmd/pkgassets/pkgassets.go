@@ -69,6 +69,7 @@ name will be the name of the package plus the ".go" extension.
 	showLicense      bool
 	showVersion      bool
 	showExamples     bool
+	showVerbose      bool
 	outputFName      string
 	generateMarkdown bool
 	generateManPage  bool
@@ -109,6 +110,7 @@ func main() {
 	app.BoolVar(&showHelp, "h,help", false, "display help")
 	app.BoolVar(&showLicense, "l,license", false, "display license")
 	app.BoolVar(&showVersion, "v,version", false, "display version")
+	app.BoolVar(&showVerbose, "verbose", false, "verbose output")
 	app.BoolVar(&showExamples, "examples", false, "display example(s)")
 	app.StringVar(&outputFName, "o,output", "", "output filename")
 	app.BoolVar(&generateMarkdown, "generate-markdown", false, "generate markdown documentation")
@@ -222,6 +224,9 @@ func main() {
     %s = map[string][]byte{`, mapVName, packageName, mapVName)
 		// Walk the asset directory structure and for each file found at it to the map...
 		if err = filepath.Walk(assetDir, func(walkingPath string, info os.FileInfo, err error) error {
+			if showVerbose {
+				fmt.Printf("walkingPath %q\n", walkingPath)
+			}
 			if info.IsDir() {
 				return nil
 			}
