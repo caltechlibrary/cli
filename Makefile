@@ -61,11 +61,18 @@ dist/windows-amd64:
 	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
-dist/macosx-amd64:
+dist/macos-amd64:
 	mkdir -p dist/bin
 	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
 	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go
-	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
+	cd dist && zip -r $(PROJECT)-$(VERSION)-macos-amd64.zip README.md LICENSE INSTALL.md bin/*
+	rm -fR dist/bin
+
+dist/macos-arm64:
+	mkdir -p dist/bin
+	env  GOOS=darwin GOARCH=arm64 go build -o dist/bin/cligenerate cmd/cligenerate/cligenerate.go
+	env  GOOS=darwin GOARCH=arm64 go build -o dist/bin/pkgassets cmd/pkgassets/pkgassets.go
+	cd dist && zip -r $(PROJECT)-$(VERSION)-macos-arm64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/raspbian-arm7:
@@ -82,7 +89,7 @@ distribute_docs:
 	cp -v INSTALL.md dist/
 	./package-versions.bash > dist/package-versions.txt
 
-release: bootstrap distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7
+release: bootstrap distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macos-amd64 dist/macos-arm64 dist/raspbian-arm7
 
 website:
 	./mk-website.bash

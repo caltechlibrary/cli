@@ -4,7 +4,7 @@
  *
  * @author R. S. Doiel, <rsdoiel@library.caltech.edu>
  *
- * Copyright (c) 2018, Caltech
+ * Copyright (c) 2021, Caltech
  * All rights not granted herein are expressly reserved by Caltech.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -32,12 +32,12 @@ import (
 )
 
 const (
-	Version = `v0.0.16b`
+	Version = `v0.0.17`
 
 	LicenseText = `
 %s %s
 
-Copyright (c) 2018, Caltech
+Copyright (c) 2021, Caltech
 All rights not granted herein are expressly reserved by Caltech.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -52,6 +52,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `
 )
 
+// v0.0.17 Added go1.16 support
 //
 // v0.0.16 Verb.AddParams() was renamed Verb.SetParams()
 //

@@ -11,39 +11,50 @@
 </header>
 <nav>
 <ul>
-<li><a href="/">Home</a></li>
-<li><a href="../index.html">README</a></li>
-<li><a href="../license.html">LICENSE</a></li>
-<li><a href="../install.html">INSTALL</a></li>
-<li><a href="./">Documentation</a></li>
-<li><a href="https://github.com/caltechlibrary/cli">Github</a></li>
+<li>
+<a href="/">Home</a>
+</li>
+<li>
+<a href="../index.html">README</a>
+</li>
+<li>
+<a href="../license.html">LICENSE</a>
+</li>
+<li>
+<a href="../install.html">INSTALL</a>
+</li>
+<li>
+<a href="./">Documentation</a>
+</li>
+<li>
+<a href="https://github.com/caltechlibrary/cli">Github</a>
+</li>
 </ul>
-
 </nav>
 
 <section>
-<h1>USAGE</h1>
-
-<pre><code>cligenerate [OPTIONS]
-</code></pre>
-
-<h2>SYNOPSIS</h2>
-
-<p>The cli package and cli application generator
-provides a standard way to construct a command line interfaces
-encouraging uniformity across applications built at Caltech
-Library. The <em>cligenerator</em> program is intended primarily to be
-an example of how to use the <em>cli</em> package.</p>
-
-<h2>DESCRIPTION</h2>
-
-<p>This is a cli application generator. It also demonstrates
-how to use the cli package.</p>
-
-<h2>OPTIONS</h2>
-
-<p>Below are a set of options available.</p>
-
+<h1 id="usage">
+USAGE
+</h1>
+<pre><code>cligenerate [OPTIONS]</code></pre>
+<h2 id="synopsis">
+SYNOPSIS
+</h2>
+<p>
+The cli package and cli application generator provides a standard way to construct a command line interfaces encouraging uniformity across applications built at Caltech Library. The <em>cligenerator</em> program is intended primarily to be an example of how to use the <em>cli</em> package.
+</p>
+<h2 id="description">
+DESCRIPTION
+</h2>
+<p>
+This is a cli application generator. It also demonstrates how to use the cli package.
+</p>
+<h2 id="options">
+OPTIONS
+</h2>
+<p>
+Below are a set of options available.
+</p>
 <pre><code>    -app                set the name of your generated app (e.g. helloworld)
     -e, -examples       display examples
     -generate-manpage   generate man page
@@ -51,36 +62,35 @@ how to use the cli package.</p>
     -h, -help           display help
     -i, -input          input file name
     -l, -license        display license
-    -name, -author      set the author name (e.g. '@author Jane Doe, &lt;jane.doe@example.edu&gt;')
+    -name, -author      set the author name (e.g. &#39;@author Jane Doe, &lt;jane.doe@example.edu&gt;&#39;)
     -nl, -newline       if true add a trailing newline
     -o, -output         output file name
     -p, -pretty         pretty print output
     -quiet              suppress error messages
-    -synopsis           set a short application description (e.g. says 'Hello World!')
+    -synopsis           set a short application description (e.g. says &#39;Hello World!&#39;)
     -use-bugs           filename holding bugs
     -use-description    filename holding a detailed description of application.
     -use-examples       filename holding examples
     -use-license        filename holding the license
-    -v, -version        display version
-</code></pre>
-
-<h2>EXAMPLES</h2>
-
-<p>Example generating a new &ldquo;helloworld&rdquo;</p>
-
+    -v, -version        display version</code></pre>
+<h2 id="examples">
+EXAMPLES
+</h2>
+<p>
+Example generating a new “helloworld”
+</p>
 <pre><code>    cligenerate -app=helloworld \
         -name=&quot;@author Jane Doe, &lt;jane.doe@example.edu&gt;&quot; \
         -decription=&quot;This is a demo cli&quot; \
-        -use-license=LICENSE
-</code></pre>
-
-<p>cligenerate v0.0.14</p>
-
+        -use-license=LICENSE</code></pre>
+<p>
+cligenerate v0.0.14
+</p>
 </section>
 
 <footer>
 <span><h1><A href="http://caltech.edu">Caltech</a></h1></span>
-<span>&copy; 2018 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<span>&copy; 2021 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
 <address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
 <span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
 <span><a href="mailto:library@caltech.edu">Email Us</a></span>

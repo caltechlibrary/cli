@@ -44,18 +44,18 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 			}
 		}
 	}
-	fmt.Fprintf(w, "\n# USAGE\n\n	%s\n\n", strings.Join(parts, " "))
+	fmt.Fprintf(w, "\nUSAGE\n=====\n\n	%s\n\n", strings.Join(parts, " "))
 
 	if section, ok := c.Documentation["synopsis"]; ok == true {
-		fmt.Fprintf(w, "## SYNOPSIS\n\n%s\n\n", section)
+		fmt.Fprintf(w, "SYNOPSIS\n--------\n\n%s\n\n", section)
 	}
 
 	if section, ok := c.Documentation["description"]; ok == true {
-		fmt.Fprintf(w, "## DESCRIPTION\n\n%s\n\n", section)
+		fmt.Fprintf(w, "DESCRIPTION\n-----------\n\n%s\n\n", section)
 	}
 
 	if len(c.env) > 0 {
-		fmt.Fprintf(w, "## ENVIRONMENT\n\n")
+		fmt.Fprintf(w, "ENVIRONMENT\n-----------\n\n")
 		if len(c.options) > 0 {
 			fmt.Fprintf(w, "Environment variables can be overridden by corresponding options\n\n")
 		}
@@ -77,7 +77,7 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 	}
 
 	if len(c.options) > 0 {
-		fmt.Fprintf(w, "## OPTIONS\n\n")
+		fmt.Fprintf(w, "OPTIONS\n-------\n\n")
 		parts := []string{}
 		parts = append(parts, "Below are a set of options available.")
 		if len(c.env) > 0 {
@@ -105,7 +105,7 @@ func (c *Cli) GenerateMarkdown(w io.Writer) {
 	}
 
 	if section, ok := c.Documentation["examples"]; ok == true {
-		fmt.Fprintf(w, "## EXAMPLES\n\n%s\n\n", section)
+		fmt.Fprintf(w, "EXAMPLES\n--------\n\n%s\n\n", section)
 	}
 
 	if len(c.Documentation) > 0 {
